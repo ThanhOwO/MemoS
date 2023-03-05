@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "892505057",
+    "project_id": "memos-9cd60",
+    "storage_bucket": "memos-9cd60.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:892505057:android:4d4f04d57a674cff13e0a0",
+        "android_client_info": {
+          "package_name": "com.Thanh.memos"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "892505057-lrrui8j6atiu8f51n9gi8ie5foicfq1e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.Thanh.memos",
+            "certificate_hash": "dead0bd1489c66d528c3bfc691abfb6c0ad8f041"
+          }
+        },
+        {
+          "client_id": "892505057-blg01bandjd7f4kk8t8jkt5lee6j4g12.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBFxq3R_cBZqdjRpO4skB2QoZe2OiJKBNQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "892505057-blg01bandjd7f4kk8t8jkt5lee6j4g12.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
