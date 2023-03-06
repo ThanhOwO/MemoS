@@ -18,6 +18,7 @@
         android:layout_marginLeft="16dp"/>
 
     <LinearLayout
+        android:id="@+id/registercontainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -66,19 +67,38 @@
         android:background="@drawable/btn_bg"
         android:text="Sign Up"
         android:textColor="@color/black"
-        android:layout_above="@+id/loginTV" />
+        android:layout_below="@+id/registercontainer"
+        android:layout_marginTop="80dp"/>
 
-    <TextView
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/loginTV"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="50dp"
-        android:layout_marginTop="18dp"
-        android:text="Already have an account ? Login now"
-        android:textStyle="bold"
-        android:textColor="@color/black"/>
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Already have an account? "
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:layout_toLeftOf="@+id/loginTV"
+            android:layout_marginBottom="50dp"/>
+
+
+        <TextView
+            android:id="@+id/loginTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="50dp"
+            android:text="Login now"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginLeft="5dp"/>
+    </LinearLayout>
+
+
 
 
 </RelativeLayout>
