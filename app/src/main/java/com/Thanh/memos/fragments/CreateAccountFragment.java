@@ -1,5 +1,6 @@
 package com.Thanh.memos.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -11,11 +12,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.Thanh.memos.FragmentReplacerActivity;
+import com.Thanh.memos.MainActivity;
 import com.Thanh.memos.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class CreateAccountFragment extends Fragment {
 
@@ -24,6 +36,7 @@ public class CreateAccountFragment extends Fragment {
     private Button signUpBtn;
     private FirebaseAuth auth;
     public static final String EMAIL_REGEX = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$";
+    private ProgressBar progressBar;
 
 
     public CreateAccountFragment() {
@@ -54,6 +67,7 @@ public class CreateAccountFragment extends Fragment {
         confirmPasswordEt = view.findViewById(R.id.confirmPassET);
         loginTv = view.findViewById(R.id.loginTV);
         signUpBtn = view.findViewById(R.id.signUpBtn);
+        progressBar = view.findViewById(R.id.progressbar);
 
         auth = FirebaseAuth.getInstance();
     }
@@ -84,10 +98,65 @@ public class CreateAccountFragment extends Fragment {
                     return;
                 }
                 if(password.isEmpty() || password.length() < 6){
-                    nameEt.setError("Password must be larger than 6");
+                    passwordEt.setError("Password must be larger than 6");
                     return;
                 }
+                if(confirmPassword.isEmpty() || !password.equals(confirmPassword)){
+                    confirmPasswordEt.setError("Password does not match");
+                    return;
+                }
+
+                progressBar.setVisibility(View.VISIBLE);
+
+                createAccount(name, email, password);
             }
         });
+    }
+
+    //Create new user
+    private void createAccount(String name, String email, String password){
+        auth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(task.isSuccessful()){
+
+                            FirebaseUser user = auth.getCurrentUser();
+                            uploadUser(user, name, email);
+
+                        }else{
+                            progressBar.setVisibility(View.GONE);
+                            String exception = task.getException().getMessage();
+                            Toast.makeText(getContext(), "Error: "+exception, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
+    //Put user into cloud database
+    private void uploadUser(FirebaseUser user, String name, String email){
+        Map<String, Object> map = new HashMap<>();
+
+        map.put("name", name);
+        map.put("email", email);
+        map.put("profileImage", " ");
+        map.put("uid", user.getUid());
+
+        FirebaseFirestore.getInstance().collection("Users").document(user.getUid())
+                .set(map)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if(task.isSuccessful()){
+                            assert getActivity() != null;
+                            progressBar.setVisibility(View.GONE);
+                            startActivity(new Intent(getActivity().getApplicationContext(), MainActivity.class));
+                            getActivity().finish();
+                        }else{
+                            progressBar.setVisibility(View.GONE);
+                            Toast.makeText(getContext(), "Error: "+task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 }
