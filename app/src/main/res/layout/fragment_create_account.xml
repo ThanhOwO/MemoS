@@ -7,6 +7,7 @@
     android:background="@drawable/memosbg">
 
     <TextView
+        android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textStyle="bold"
@@ -21,41 +22,45 @@
         android:id="@+id/registercontainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/title"
         android:orientation="vertical"
-        android:layout_centerInParent="true">
+        android:layout_marginTop="30dp">
+
         <EditText
             android:id="@+id/nameET"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="12dp"
             android:layout_margin="8dp"
             android:background="@drawable/text_box"
-            android:hint="Name"/>
+            android:hint="Name"
+            android:padding="12dp" />
+
         <EditText
             android:id="@+id/emailET"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="12dp"
             android:layout_margin="8dp"
             android:background="@drawable/text_box"
-            android:hint="Email"/>
+            android:hint="Email"
+            android:padding="12dp" />
+
         <EditText
             android:id="@+id/passwordET"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="12dp"
             android:layout_margin="8dp"
             android:background="@drawable/text_box"
-            android:hint="Password"/>
+            android:hint="Password"
+            android:padding="12dp" />
 
         <EditText
             android:id="@+id/confirmPassET"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="12dp"
             android:layout_margin="8dp"
             android:background="@drawable/text_box"
-            android:hint="Confirm Password"/>
+            android:hint="Confirm Password"
+            android:padding="12dp" />
     </LinearLayout>
 
     <ProgressBar
@@ -66,7 +71,8 @@
         android:layout_below="@+id/registercontainer"
         android:layout_above="@+id/signUpBtn"
         android:layout_marginTop="60dp"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        />
     <Button
         android:id="@+id/signUpBtn"
         android:layout_width="match_parent"
@@ -93,7 +99,7 @@
             android:textColor="@color/black"
             android:textStyle="bold"
             android:layout_toLeftOf="@+id/loginTV"
-            android:layout_marginBottom="50dp"/>
+            android:layout_marginBottom="120dp"/>
 
 
         <TextView

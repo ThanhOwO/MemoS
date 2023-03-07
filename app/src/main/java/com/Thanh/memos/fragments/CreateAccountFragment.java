@@ -35,7 +35,7 @@ public class CreateAccountFragment extends Fragment {
     private TextView loginTv;
     private Button signUpBtn;
     private FirebaseAuth auth;
-    public static final String EMAIL_REGEX = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$";
+    public static final String EMAIL_REGEX = "^(.+)@(.+)$";
     private ProgressBar progressBar;
 
 
@@ -122,6 +122,15 @@ public class CreateAccountFragment extends Fragment {
                         if(task.isSuccessful()){
 
                             FirebaseUser user = auth.getCurrentUser();
+                            user.sendEmailVerification()
+                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if(task.isSuccessful()){
+                                                        Toast.makeText(getContext(), "Email verification link send", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+                                            });
                             uploadUser(user, name, email);
 
                         }else{
