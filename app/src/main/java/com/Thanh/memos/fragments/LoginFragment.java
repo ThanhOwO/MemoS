@@ -137,5 +137,28 @@ public class LoginFragment extends Fragment {
     }
 
     //Google login method
+    private static final int REQ_ONE_TAP = 2;  // Can be any integer unique to the Activity.
+    private boolean showOneTapUI = true;
+    // ...
 
+    /*@Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+            case REQ_ONE_TAP:
+                try {
+                    SignInCredential credential = oneTapClient.getSignInCredentialFromIntent(data);
+                    String idToken = credential.getGoogleIdToken();
+                    if (idToken !=  null) {
+                        // Got an ID token from Google. Use it to authenticate
+                        // with Firebase.
+                        //Log.d(TAG, "Got ID token.");
+                    }
+                } catch (ApiException e) {
+                    // ...
+                }
+                break;
+        }
+    }*/
 }
