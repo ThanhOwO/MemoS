@@ -5,38 +5,54 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.Thanh.memos.FragmentReplacerActivity;
 import com.Thanh.memos.MainActivity;
 import com.Thanh.memos.R;
 import com.google.android.gms.auth.api.identity.BeginSignInRequest;
 import com.google.android.gms.auth.api.identity.Identity;
 import com.google.android.gms.auth.api.identity.SignInClient;
 import com.google.android.gms.auth.api.identity.SignInCredential;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class LoginFragment extends Fragment {
 
     private EditText emailEt, passwordEt;
     private TextView signUpTv, forgotPasswordTv;
-    private Button loginBtn, googleSignInBtn;
+    private Button loginBtn;
+    private ImageButton googleSignInBtn;
     private ProgressBar progressBar;
-
     private FirebaseAuth auth;
+    private static final int RC_SIGN_IN = 1;
+    GoogleSignInClient mGoogleSignInClient;
 
     public LoginFragment() {
         // Required empty public constructor
@@ -55,19 +71,6 @@ public class LoginFragment extends Fragment {
 
         init(view);
 
-        auth = FirebaseAuth.getInstance();
-
-        //Authorization with firebase
-        BeginSignInRequest signInRequest = BeginSignInRequest.builder()
-                .setGoogleIdTokenRequestOptions(BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
-                        .setSupported(true)
-                        // Your server's client ID, not your Android client ID.
-                        .setServerClientId(getString(R.string.default_web_client_id))
-                        // Only show accounts previously used to sign in.
-                        .setFilterByAuthorizedAccounts(true)
-                        .build())
-                .build();
-
 
         clickListener();
     }
@@ -80,6 +83,16 @@ public class LoginFragment extends Fragment {
         signUpTv = view.findViewById(R.id.signupTV);
         forgotPasswordTv = view.findViewById(R.id.forgotTV);
         progressBar = view.findViewById(R.id.progressBar);
+
+        auth = FirebaseAuth.getInstance();
+
+        //Authorization with firebase
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        mGoogleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
     }
 
     //user login and verification phase
@@ -98,6 +111,8 @@ public class LoginFragment extends Fragment {
                     emailEt.setError("The password digit must be larger than 6");
                     return;
                 }
+
+                progressBar.setVisibility(View.VISIBLE);
                 auth.signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
@@ -112,6 +127,7 @@ public class LoginFragment extends Fragment {
                                 }else{
                                     String exception = "Error: "+task.getException().getMessage();
                                     Toast.makeText(getContext(), exception, Toast.LENGTH_SHORT).show();
+                                    progressBar.setVisibility(View.GONE);
                                 }
                             }
                         });
@@ -121,7 +137,14 @@ public class LoginFragment extends Fragment {
         googleSignInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                signIn();
+            }
+        });
 
+        signUpTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((FragmentReplacerActivity) getActivity()).setFragment(new CreateAccountFragment());
             }
         });
     }
@@ -131,34 +154,86 @@ public class LoginFragment extends Fragment {
 
         if(getActivity() == null)
             return;
-
+        progressBar.setVisibility(View.GONE);
         startActivity(new Intent(getActivity().getApplicationContext(), MainActivity.class));
         getActivity().finish();
     }
 
     //Google login method
-    private static final int REQ_ONE_TAP = 2;  // Can be any integer unique to the Activity.
-    private boolean showOneTapUI = true;
-    // ...
+    private void signIn(){
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
 
-    /*@Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);
 
-        switch (requestCode) {
-            case REQ_ONE_TAP:
-                try {
-                    SignInCredential credential = oneTapClient.getSignInCredentialFromIntent(data);
-                    String idToken = credential.getGoogleIdToken();
-                    if (idToken !=  null) {
-                        // Got an ID token from Google. Use it to authenticate
-                        // with Firebase.
-                        //Log.d(TAG, "Got ID token.");
-                    }
-                } catch (ApiException e) {
-                    // ...
-                }
-                break;
+        if(requestCode == RC_SIGN_IN) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            try{
+                //Google sign in successful, authenticate with Firebase
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                assert account != null;
+                firebaseAuthWithGoogle(account.getIdToken());
+            }catch (ApiException e) {
+                e.printStackTrace();
+            }
         }
-    }*/
+    }
+
+    private void firebaseAuthWithGoogle(String idToken){
+        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
+        auth.signInWithCredential(credential)
+                .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(task.isSuccessful()){
+                            FirebaseUser user = auth.getCurrentUser();
+                            updateUI(user);
+                        }else{
+                            Log.w("TAG", "signInWithCredential:failure", task.getException());
+                        }
+                    }
+                });
+    }
+
+    // Override the onResume method to check if the user is already signed in
+    @Override
+    public void onResume() {
+        super.onResume();
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getContext());
+        if (account != null) {
+            // User is already signed in, authenticate with Firebase
+            firebaseAuthWithGoogle(account.getIdToken());
+        }
+    }
+
+    private void updateUI(FirebaseUser user){
+
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getActivity());
+        Map<String, Object> map = new HashMap<>();
+
+        map.put("name", account.getDisplayName());
+        map.put("email", account.getEmail());
+        map.put("profileImage", String.valueOf(account.getPhotoUrl()));
+        map.put("uid", user.getUid());
+
+        FirebaseFirestore.getInstance().collection("Users").document(user.getUid())
+                .set(map)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if(task.isSuccessful()){
+                            assert getActivity() != null;
+                            progressBar.setVisibility(View.GONE);
+                            sendUserToMainActivity();
+
+                        }else{
+                            progressBar.setVisibility(View.GONE);
+                            Toast.makeText(getContext(), "Error: "+task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
 }
