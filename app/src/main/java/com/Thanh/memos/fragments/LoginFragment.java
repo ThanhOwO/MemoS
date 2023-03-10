@@ -53,7 +53,6 @@ public class LoginFragment extends Fragment {
     private ImageButton googleSignInBtn;
     private ProgressBar progressBar;
     private FirebaseAuth auth;
-    GoogleSignInOptions gso;
     GoogleSignInClient gsc;
 
 
@@ -107,6 +106,15 @@ public class LoginFragment extends Fragment {
 
     //user login and verification phase
     private void clickListener(){
+
+        //navigate to forgot password page
+        forgotPasswordTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((FragmentReplacerActivity) getActivity()).setFragment(new ForgotPassword());
+            }
+        });
+
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -151,6 +159,7 @@ public class LoginFragment extends Fragment {
             }
         });
 
+        //navigate to sign up page
         signUpTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -222,6 +231,9 @@ public class LoginFragment extends Fragment {
         map.put("email", account.getEmail());
         map.put("profileImage", String.valueOf(account.getPhotoUrl()));
         map.put("uid", user.getUid());
+        map.put("following", 0);
+        map.put("followers", 0);
+        map.put("status", "");
 
         FirebaseFirestore.getInstance().collection("Users").document(user.getUid())
                 .set(map)
