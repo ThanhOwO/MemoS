@@ -25,7 +25,7 @@ public class FragmentReplacerActivity extends AppCompatActivity {
         setFragment(new LoginFragment());
     }
 
-    //animation for changing between login and signup
+    //animation for changing page
     public void setFragment(Fragment fragment){
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right);

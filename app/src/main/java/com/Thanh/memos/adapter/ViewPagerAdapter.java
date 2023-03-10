@@ -14,7 +14,7 @@ import com.Thanh.memos.fragments.Search;
 public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     int noOfTabs;
 
-    public ViewPagerAdapter(@NonNull FragmentManager fm, int tabCount) {
+    public ViewPagerAdapter(@NonNull FragmentManager fm, int noOfTabs) {
         super(fm);
         this.noOfTabs = noOfTabs;
     }

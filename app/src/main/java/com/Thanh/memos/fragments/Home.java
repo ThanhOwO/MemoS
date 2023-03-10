@@ -49,12 +49,12 @@ public class Home extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         init(view);
-        reference = FirebaseFirestore.getInstance().collection("Posts").document(user.getUid());
+        //reference = FirebaseFirestore.getInstance().collection("Posts").document(user.getUid());
         list = new ArrayList<>();
         adapter = new HomeAdapter(list, getContext());
         recyclerView.setAdapter(adapter);
 
-        loadDataFromFirestore();
+        loadDataFromFirestorage();
     }
 
     private void init(View view){
@@ -72,11 +72,16 @@ public class Home extends Fragment {
     }
 
     //get data from Firebase storage
-    private void loadDataFromFirestore(){
+    private void loadDataFromFirestorage(){
         list.add(new HomeModel("Thanh","03/09/2023","","","19522230",45));
         list.add(new HomeModel("Tung","03/09/2023","","","45234140",12));
         list.add(new HomeModel("Thanh2","03/09/2023","","","15622141",8));
         list.add(new HomeModel("Thanh3","03/09/2023","","","85334247",78));
+        list.add(new HomeModel("Thanh4","03/09/2023","","","19522230",45));
+        list.add(new HomeModel("Tung2","03/09/2023","","","45234140",127));
+        list.add(new HomeModel("Thanh5","03/09/2023","","","15622141",84));
+        list.add(new HomeModel("Thanh6","03/09/2023","","","85334247",782));
+        list.add(new HomeModel("Thanh7","03/09/2023","","","85334247",18));
 
         adapter.notifyDataSetChanged();
 

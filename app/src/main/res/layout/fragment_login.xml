@@ -70,7 +70,8 @@
         android:background="@drawable/btn_bg"
         android:text="Log In"
         android:textColor="@color/black"
-        android:layout_above="@+id/signupTV" />
+        android:layout_above="@+id/signupTV"
+        android:textStyle="bold"/>
     <ImageButton
         android:id="@+id/googleSignInBtn"
         android:layout_width="50dp"
@@ -78,7 +79,7 @@
         android:background="@drawable/google"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="110dp"/>
+        android:layout_marginBottom="50dp"/>
 
 
     <TextView
@@ -87,18 +88,18 @@
         android:layout_centerHorizontal="true"
         android:id="@+id/signupTV"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="190dp"
+        android:layout_marginBottom="130dp"
         android:layout_marginTop="20dp"
         android:text="Register Now!"
         android:textStyle="bold"
-        android:textColor="@color/black"/>
+        android:textColor="@color/colorAccent"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="170dp"
+        android:layout_marginBottom="110dp"
         android:text="Or Sign Up With"
         android:textStyle="bold"
         android:textColor="@color/black"/>

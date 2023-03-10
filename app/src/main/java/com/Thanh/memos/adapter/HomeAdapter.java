@@ -34,7 +34,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeHolder> {
         this.context = context;
     }
 
-    @androidx.annotation.NonNull
+    @NonNull
     @Override
     public HomeHolder onCreateViewHolder(@androidx.annotation.NonNull ViewGroup parent, int viewType) {
 
@@ -54,12 +54,10 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeHolder> {
         if(count == 0){
             holder.likecountTv.setVisibility(View.INVISIBLE);
         }else if (count == 1) {
-            holder.likecountTv.setText(count + "likes");
+            holder.likecountTv.setText(count + " likes");
         }else{
-            holder.likecountTv.setText(count + "likes");
+            holder.likecountTv.setText(count + " likes");
         }
-
-        holder.timeTv.setText(list.get(position).getLikeCount() + "like");
 
         Random random = new Random();
         int color = Color.argb(255, random.nextInt(256), random.nextInt(256), random.nextInt(256));

@@ -67,13 +67,15 @@ public class CreateAccountFragment extends Fragment {
         confirmPasswordEt = view.findViewById(R.id.confirmPassET);
         loginTv = view.findViewById(R.id.loginTV);
         signUpBtn = view.findViewById(R.id.signUpBtn);
-        progressBar = view.findViewById(R.id.progressbar);
+        progressBar = view.findViewById(R.id.progressBar);
 
         auth = FirebaseAuth.getInstance();
     }
 
-    //Login and signup conditions
+    //signup conditions
     private  void clickListener(){
+
+        //Navigate to login page
         loginTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
