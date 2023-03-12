@@ -6,14 +6,15 @@ import java.util.Date;
 
 public class PostImageModel {
 
-    private String imageUrl, id;
+    private String imageUrl, id, description;
 
     @ServerTimestamp
     private Date timestap;
 
-    public PostImageModel(String imageUrl, String id, Date timestap) {
+    public PostImageModel(String imageUrl, String id, String description, Date timestap) {
         this.imageUrl = imageUrl;
         this.id = id;
+        this.description = description;
         this.timestap = timestap;
     }
 
@@ -31,6 +32,14 @@ public class PostImageModel {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Date getTimestap() {

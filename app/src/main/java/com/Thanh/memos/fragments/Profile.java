@@ -1,5 +1,9 @@
 package com.Thanh.memos.fragments;
 
+import static android.app.Activity.RESULT_OK;
+
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -14,24 +18,39 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.Thanh.memos.R;
 import com.Thanh.memos.model.PostImageModel;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageActivity;
+import com.theartofdev.edmodo.cropper.CropImageView;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -44,6 +63,7 @@ public class Profile extends Fragment {
 
     private LinearLayout countLayout;
     private FirebaseUser user;
+    private ImageButton editprofileBtn;
     boolean isMyProfile = true;
     String uid;
     FirestoreRecyclerAdapter<PostImageModel, PostImageHolder> adapter;
@@ -79,6 +99,16 @@ public class Profile extends Fragment {
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
         loadPostImage();
         recyclerView.setAdapter(adapter);
+
+        editprofileBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CropImage.activity()
+                        .setGuidelines(CropImageView.Guidelines.ON)
+                        .setAspectRatio(1,1)
+                        .start(getContext(), Profile.this);
+            }
+        });
     }
 
     private void init(View view){
@@ -97,6 +127,7 @@ public class Profile extends Fragment {
         followBtn = view.findViewById(R.id.followBtn);
         recyclerView = view.findViewById(R.id.recyclerView);
         countLayout = view.findViewById(R.id.countLayout);
+        editprofileBtn = view.findViewById(R.id.edit_profileImage);
 
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -193,5 +224,62 @@ public class Profile extends Fragment {
     public void onStop() {
         super.onStop();
         adapter.stopListening();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK){
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+
+            Uri uri = result.getUri();
+
+            uploadImage(uri);
+        }
+    }
+
+    //Upload profile image
+    private void uploadImage(Uri uri){
+
+        StorageReference reference = FirebaseStorage.getInstance().getReference().child("Profile Images");
+
+        reference.putFile(uri)
+                .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                        if(task.isSuccessful()){
+                            reference.getDownloadUrl()
+                                    .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                        @Override
+                                        public void onSuccess(Uri uri) {
+                                            String imageURL = uri.toString();
+                                            UserProfileChangeRequest.Builder request = new UserProfileChangeRequest.Builder();
+                                            request.setPhotoUri(uri);
+
+                                            user.updateProfile(request.build());
+                                            Map<String, Object> map = new HashMap<>();
+                                            map.put("profileImage", imageURL);
+
+                                            FirebaseFirestore.getInstance().collection("Users")
+                                                    .document(user.getUid())
+                                                    .update(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<Void> task) {
+                                                            if(task.isSuccessful()){
+                                                                Toast.makeText(getContext(), "Updated Successfully", Toast.LENGTH_SHORT).show();
+                                                            }else {
+                                                                Toast.makeText(getContext(), "Error: " +task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        }
+                                                    });
+                                        }
+                                    });
+                        }else {
+                            Toast.makeText(getContext(), "Error: " +task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
     }
 }

@@ -59,6 +59,9 @@ dependencies {
     //Image cropper
     api 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
 
+    //Allow permission at runtime for android
+    implementation 'com.karumi:dexter:6.2.3'
+
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
