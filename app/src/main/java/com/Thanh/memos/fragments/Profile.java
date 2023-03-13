@@ -2,7 +2,10 @@ package com.Thanh.memos.fragments;
 
 import static android.app.Activity.RESULT_OK;
 
+import static com.Thanh.memos.fragments.Home.LIST_SIZE;
+
 import android.content.Intent;
+import android.hardware.lights.LightState;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -99,6 +102,7 @@ public class Profile extends Fragment {
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
         loadPostImage();
         recyclerView.setAdapter(adapter);
+        recyclerView.setItemAnimator(null);
 
         editprofileBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -167,6 +171,8 @@ public class Profile extends Fragment {
                 }
             }
         });
+
+        postCountTv.setText("" + LIST_SIZE);
     }
 
     //Get post images of user from Firebase storage
@@ -179,7 +185,7 @@ public class Profile extends Fragment {
         }
 
         DocumentReference reference = FirebaseFirestore.getInstance().collection("Users").document(uid);
-        Query query = reference.collection("Images");
+        Query query = reference.collection("Post Images");
         FirestoreRecyclerOptions<PostImageModel> options = new FirestoreRecyclerOptions.Builder<PostImageModel>()
                 .setQuery(query, PostImageModel.class)
                 .build();

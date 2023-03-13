@@ -41,7 +41,8 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_below="@+id/layout">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -53,7 +54,7 @@
             android:id="@+id/descriptionET"
             android:background="@android:color/transparent"
             android:hint="Add Something About This Post"
-            android:minLines="12"/>
+            android:minLines="12" />
 
         <View
             android:layout_width="match_parent"

@@ -38,7 +38,7 @@ public class Home extends Fragment {
     HomeAdapter adapter;
     private List<HomeModel> list;
     private FirebaseUser user;
-    DocumentReference reference;
+    public static int LIST_SIZE = 0;
 
     public Home() {
         // Required empty public constructor
@@ -56,7 +56,7 @@ public class Home extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         init(view);
-        //reference = FirebaseFirestore.getInstance().collection("Posts").document(user.getUid());
+
         list = new ArrayList<>();
         adapter = new HomeAdapter(list, getContext());
         recyclerView.setAdapter(adapter);
@@ -84,32 +84,40 @@ public class Home extends Fragment {
         CollectionReference reference = FirebaseFirestore.getInstance().collection("Users")
                         .document(user.getUid())
                         .collection("Post Images");
-        reference.addSnapshotListener(getActivity(), new EventListener<QuerySnapshot>() {
+        reference.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if(error != null) {
                     Log.e("Error: ", error.getMessage());
                     return;
                 }
-                assert value != null;
+
+                if(value == null)
+                    return;
+                list.clear();
+
                 for(QueryDocumentSnapshot snapshot : value){
 
-                    list.add(new HomeModel(snapshot.get("userName").toString(), snapshot.get("").toString(),
-                            snapshot.get("timestamp").toString(),
-                            snapshot.get("profileImage").toString(),
-                            snapshot.get("postImage").toString(),
-                            snapshot.get("uid").toString(),
-                            snapshot.get("comments").toString(),
-                            snapshot.get("description").toString(),
-                            snapshot.get("id").toString(),
-                            Integer.parseInt(snapshot.get("likeCount").toString())
+                    if(!snapshot.exists())
+                        return;
+
+                    HomeModel model = snapshot.toObject(HomeModel.class);
+                    list.add(new HomeModel(
+                            model.getUserName(),
+                            model.getProfileImage(),
+                            model.getImageUrl(),
+                            model.getUid(),
+                            model.getComments(),
+                            model.getDescription(),
+                            model.getId(),
+                            model.getTimestamp(),
+                            model.getLikeCount()
                     ));
-                    adapter.notifyDataSetChanged();
                 }
+                adapter.notifyDataSetChanged();
+
+                LIST_SIZE = list.size();
             }
         });
-
-        adapter.notifyDataSetChanged();
-
     }
 }

@@ -3,17 +3,24 @@ package com.Thanh.memos.fragments;
 import static android.app.Activity.RESULT_OK;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.Dialog;
+import android.content.ContentUris;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,6 +70,7 @@ public class Add extends Fragment {
     private GalleryAdapter adapter;
     Uri imageUri;
     private FirebaseUser user;
+    Dialog dialog;
 
     public Add() {
         // Required empty public constructor
@@ -81,7 +89,7 @@ public class Add extends Fragment {
 
         init(view);
 
-        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 4));
         recyclerView.setHasFixedSize(true);
 
         list = new ArrayList<>();
@@ -95,14 +103,11 @@ public class Add extends Fragment {
         adapter.SendImage(new GalleryAdapter.SendImage() {
             @Override
             public void onSend(Uri picUri) {
-                imageUri = picUri;
-
-
 
                 CropImage.activity(picUri)
                         .setGuidelines(CropImageView.Guidelines.ON)
                         .setAspectRatio(4, 3)
-                        .start(getActivity(), Add.this);
+                        .start(getContext(), Add.this);
             }
         });
 
@@ -110,7 +115,9 @@ public class Add extends Fragment {
             @Override
             public void onClick(View view) {
                 FirebaseStorage storage = FirebaseStorage.getInstance();
-                StorageReference storageReference = storage.getReference().child("Post Images/" + System.currentTimeMillis());
+                final StorageReference storageReference = storage.getReference().child("Post Images/" + System.currentTimeMillis());
+
+                dialog.show();
 
                 storageReference.putFile(imageUri)
                         .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
@@ -120,10 +127,13 @@ public class Add extends Fragment {
                                     storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                         @Override
                                         public void onSuccess(Uri uri) {
-
                                             uploadData(uri.toString());
                                         }
                                     });
+                                }else {
+
+                                    dialog.dismiss();
+                                    Toast.makeText(getContext(), "Failed to upload post", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
@@ -136,11 +146,11 @@ public class Add extends Fragment {
                 .document(user.getUid()).collection("Post Images");
 
         String id = reference.document().getId();
-        String descripion = descET.getText().toString();
+        String description = descET.getText().toString();
 
         Map<String, Object> map = new HashMap<>();
         map.put("id", id);
-        map.put("description", descripion);
+        map.put("description", description);
         map.put("imageUrl", imageURL);
         map.put("timestamp", FieldValue.serverTimestamp());
 
@@ -156,9 +166,11 @@ public class Add extends Fragment {
                     public void onComplete(@NonNull Task<Void> task) {
                         if(task.isSuccessful()){
                             System.out.println();
+                            Toast.makeText(getContext(), "Uploaded", Toast.LENGTH_SHORT).show();
                         }else {
                             Toast.makeText(getContext(), "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
+                        dialog.dismiss();
                     }
                 });
     }
@@ -171,44 +183,101 @@ public class Add extends Fragment {
         nextBtn = view.findViewById(R.id.nextBtn);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
+
+        dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.loading_dialog);
+        dialog.getWindow().setBackgroundDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.dialog_bg, null));
+        dialog.setCancelable(false);
     }
 
     //Get access to file to get images from file on android
     @Override
     public void onResume() {
         super.onResume();
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Dexter.withContext(getContext())
-                        .withPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                Manifest.permission.READ_EXTERNAL_STORAGE)
-                        .withListener(new MultiplePermissionsListener() {
-                            @Override
-                            public void onPermissionsChecked(MultiplePermissionsReport report) {
-                                if(report.areAllPermissionsGranted()){
-                                    File file = new File(Environment.getExternalStorageDirectory().toString()+"/Download");
 
-                                    if(file.exists()){
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S) {
+            // Android 12 or lower
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Dexter.withContext(getContext())
+                            .withPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                Manifest.permission.READ_EXTERNAL_STORAGE)
+                            .withListener(new MultiplePermissionsListener() {
+                                @Override
+                                public void onPermissionsChecked(MultiplePermissionsReport report) {
+
+                                    if(report.areAllPermissionsGranted()){
+
+                                    File file = new File(Environment.getExternalStorageDirectory().toString() + "/Download");
+                                    if(file.exists()) {
                                         File[] files = file.listFiles();
                                         assert files != null;
-                                        for(File file1 : files){
-                                            if(file1.getAbsolutePath().endsWith(".jpg") || file1.getAbsolutePath().endsWith(".png")){
+                                        for (File file1 : files) {
+                                            if (file1.getAbsolutePath().endsWith(".jpg") || file1.getAbsolutePath().endsWith(".png")) {
                                                 list.add(new GalleryImages(Uri.fromFile(file1)));
                                                 adapter.notifyDataSetChanged();
                                             }
                                         }
                                     }
+
+                                    }
                                 }
+                                @Override
+                                public void onPermissionRationaleShouldBeShown(List<PermissionRequest> list, PermissionToken permissionToken) {
 
-                            }
-                            @Override
-                            public void onPermissionRationaleShouldBeShown(List<PermissionRequest> list, PermissionToken permissionToken) {
+                                }
+                            }).check();
+                }
+            });
 
-                            }
-                        }).check();
-            }
-        });
+        } else {
+            // Android 13 or higher
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Dexter.withContext(getContext())
+                            .withPermissions(Manifest.permission.READ_MEDIA_IMAGES)
+                            .withListener(new MultiplePermissionsListener() {
+                                @Override
+                                public void onPermissionsChecked(MultiplePermissionsReport report) {
+
+                                    if(report.areAllPermissionsGranted()){
+                                        //This code is only use for Android 13 or above
+                                        String[] projection = {MediaStore.Images.Media._ID, MediaStore.Images.Media.DATA};
+                                        String selection = MediaStore.Images.Media.MIME_TYPE + "=? OR "
+                                                + MediaStore.Images.Media.MIME_TYPE + "=?";
+                                        String[] selectionArgs = new String[]{"image/jpeg", "image/png"};
+                                        String sortOrder = MediaStore.Images.Media.DATE_MODIFIED + " DESC";
+                                        Cursor cursor = getContext().getContentResolver().query(
+                                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                                                projection,
+                                                selection,
+                                                selectionArgs,
+                                                sortOrder);
+
+                                        if (cursor != null) {
+                                            while (cursor.moveToNext()) {
+                                                @SuppressLint("Range") long id = cursor.getLong(cursor.getColumnIndex(MediaStore.Images.Media._ID));
+                                                @SuppressLint("Range") String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+                                                Uri uri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
+                                                list.add(new GalleryImages(uri));
+                                                adapter.notifyDataSetChanged();
+                                            }
+                                            cursor.close();
+                                        }
+
+                                    }
+                                }
+                                @Override
+                                public void onPermissionRationaleShouldBeShown(List<PermissionRequest> list, PermissionToken permissionToken) {
+
+                                }
+                            }).check();
+                }
+            });
+        }
+
     }
 
     @Override
@@ -217,12 +286,13 @@ public class Add extends Fragment {
 
         if(requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE){
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
-            if(requestCode == RESULT_OK){
+            if(resultCode == RESULT_OK){
 
-                Uri image = result.getUri();
+                assert result != null;
+                imageUri = result.getUri();
 
                 Glide.with(getContext())
-                        .load(image)
+                        .load(imageUri)
                         .into(imageView);
                 imageView.setVisibility(View.VISIBLE);
                 nextBtn.setVisibility(View.VISIBLE);

@@ -6,16 +6,21 @@ import java.util.Date;
 
 public class PostImageModel {
 
-    private String imageUrl, id, description;
+    private String imageUrl, id, description, uid;
 
     @ServerTimestamp
-    private Date timestap;
+    private Date timestamp;
 
-    public PostImageModel(String imageUrl, String id, String description, Date timestap) {
+    public PostImageModel() {
+
+    }
+
+    public PostImageModel(String imageUrl, String id, String description, String uid, Date timestamp) {
         this.imageUrl = imageUrl;
         this.id = id;
         this.description = description;
-        this.timestap = timestap;
+        this.timestamp = timestamp;
+        this.uid = uid;
     }
 
     public String getImageUrl() {
@@ -42,11 +47,18 @@ public class PostImageModel {
         this.description = description;
     }
 
-    public Date getTimestap() {
-        return timestap;
+    public Date getTimestamp() {
+        return timestamp;
     }
 
-    public void setTimestap(Date timestap) {
-        this.timestap = timestap;
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 }

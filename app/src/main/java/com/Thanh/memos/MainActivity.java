@@ -11,6 +11,7 @@ import com.google.android.material.tabs.TabLayout;
 
 public class MainActivity extends AppCompatActivity {
 
+
     private TabLayout tabLayout;
     private ViewPager viewPager;
     ViewPagerAdapter pagerAdapter;
