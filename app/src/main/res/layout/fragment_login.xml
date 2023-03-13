@@ -30,7 +30,8 @@
             android:layout_margin="8dp"
             android:background="@drawable/text_box"
             android:hint="Email"
-            android:padding="12dp" />
+            android:padding="12dp"
+            android:textColor="@color/black"/>
 
         <EditText
             android:id="@+id/passwordET"
@@ -39,7 +40,8 @@
             android:layout_margin="8dp"
             android:background="@drawable/text_box"
             android:hint="Password"
-            android:padding="12dp" />
+            android:padding="12dp"
+            android:textColor="@color/black"/>
 
         <TextView
             android:id="@+id/forgotTV"

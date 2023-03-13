@@ -45,9 +45,9 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="220dp"
-        android:layout_below="@+id/profileImage"
+        android:layout_below="@+id/descTv"
         android:id="@+id/imageView"
-        android:background="@color/colorAccent"/>
+        android:scaleType="centerCrop"/>
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -75,6 +75,17 @@
             android:layout_margin="8dp"
             android:background="@drawable/ic_share"/>
     </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/descTv"
+        android:text="Description"
+        android:textStyle="bold"
+        android:layout_below="@+id/profileImage"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:layout_marginBottom="10dp"/>
 
     <TextView
         android:layout_width="wrap_content"
