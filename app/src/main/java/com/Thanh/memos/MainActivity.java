@@ -1,15 +1,18 @@
 package com.Thanh.memos;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.Thanh.memos.adapter.ViewPagerAdapter;
+import com.Thanh.memos.fragments.Search;
 import com.google.android.material.tabs.TabLayout;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Search.OnDataPass {
 
 
     private TabLayout tabLayout;
@@ -39,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_search));
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_add));
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_heart));
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_heart_fill));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_profile));
 
         tabLayout.setTabGravity(TabLayout.GRAVITY_CENTER);
         tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
@@ -91,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
                         tabLayout.getTabAt(3).setIcon(R.drawable.ic_heart);
                         break;
                     case 4:
-                        tabLayout.getTabAt(4).setIcon(R.drawable.ic_heart_fill);
+                        tabLayout.getTabAt(4).setIcon(R.drawable.ic_profile);
                         break;
 
                 }
@@ -121,5 +124,29 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    public static String USER_ID;
+    public static boolean IS_SEARCHED_USER = false;
+
+    //Change the profile to the user profile that searched
+    @Override
+    public void onChange(String uid) {
+        USER_ID = uid;
+        IS_SEARCHED_USER = true;
+        viewPager.setCurrentItem(4);
+    }
+
+
+    //Back to user profile
+    @Override
+    public void onBackPressed() {
+
+        if(viewPager.getCurrentItem() == 4){
+            viewPager.setCurrentItem(0);
+            IS_SEARCHED_USER = false;
+        }
+        else
+            super.onBackPressed();
     }
 }

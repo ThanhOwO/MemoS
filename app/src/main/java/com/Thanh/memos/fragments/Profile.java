@@ -2,10 +2,11 @@ package com.Thanh.memos.fragments;
 
 import static android.app.Activity.RESULT_OK;
 
+import static com.Thanh.memos.MainActivity.IS_SEARCHED_USER;
+import static com.Thanh.memos.MainActivity.USER_ID;
 import static com.Thanh.memos.fragments.Home.LIST_SIZE;
 
 import android.content.Intent;
-import android.hardware.lights.LightState;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -24,10 +25,10 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.Thanh.memos.MainActivity;
 import com.Thanh.memos.R;
 import com.Thanh.memos.model.PostImageModel;
 import com.bumptech.glide.Glide;
@@ -49,7 +50,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.theartofdev.edmodo.cropper.CropImage;
-import com.theartofdev.edmodo.cropper.CropImageActivity;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.util.HashMap;
@@ -68,7 +68,7 @@ public class Profile extends Fragment {
     private FirebaseUser user;
     private ImageButton editprofileBtn;
     boolean isMyProfile = true;
-    String uid;
+    String userUID;
     FirestoreRecyclerAdapter<PostImageModel, PostImageHolder> adapter;
 
     public Profile() {
@@ -88,11 +88,22 @@ public class Profile extends Fragment {
 
         init(view);
 
+        //When check user done change the profile to the user that searched
+        if(IS_SEARCHED_USER){
+            userUID = USER_ID;
+            isMyProfile = false;
+        }else{
+            isMyProfile = true;
+            userUID = user.getUid();
+        }
+
         //checks whether the current user is viewing their own profile or someone else's profile.
         if (isMyProfile){
+            editprofileBtn.setVisibility(View.VISIBLE);
             followBtn.setVisibility(View.GONE);
             countLayout.setVisibility(View.VISIBLE);
         }else {
+            editprofileBtn.setVisibility(View.GONE);
             followBtn.setVisibility(View.VISIBLE);
             countLayout.setVisibility(View.GONE);
         }
@@ -141,7 +152,7 @@ public class Profile extends Fragment {
     //Get data from firebase storage
     private void loadBasicData(){
         DocumentReference userRef = FirebaseFirestore.getInstance().collection("Users")
-                .document(user.getUid());
+                .document(userUID);
 
         userRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
@@ -163,11 +174,17 @@ public class Profile extends Fragment {
                     followersCountTv.setText(String.valueOf(followers));
                     followingCountTv.setText(String.valueOf(following));
 
-                    Glide.with(getContext().getApplicationContext())
-                            .load(profileURL)
-                            .placeholder(R.drawable.ic_person)
-                            .timeout(6500)
-                            .into(profileImage);
+                    try {
+                        Glide.with(getContext().getApplicationContext())
+                                .load(profileURL)
+                                .placeholder(R.drawable.ic_person)
+                                .timeout(6500)
+                                .into(profileImage);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+
+
                 }
             }
         });
@@ -178,13 +195,8 @@ public class Profile extends Fragment {
     //Get post images of user from Firebase storage
     private void loadPostImage(){
 
-        if(isMyProfile){
-            uid = user.getUid();
-        }else {
 
-        }
-
-        DocumentReference reference = FirebaseFirestore.getInstance().collection("Users").document(uid);
+        DocumentReference reference = FirebaseFirestore.getInstance().collection("Users").document(userUID);
         Query query = reference.collection("Post Images");
         FirestoreRecyclerOptions<PostImageModel> options = new FirestoreRecyclerOptions.Builder<PostImageModel>()
                 .setQuery(query, PostImageModel.class)
@@ -208,6 +220,7 @@ public class Profile extends Fragment {
         };
 
     }
+
 
     private static class PostImageHolder extends RecyclerView.ViewHolder{
 
