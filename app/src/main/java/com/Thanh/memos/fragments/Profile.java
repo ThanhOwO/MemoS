@@ -310,6 +310,7 @@ public class Profile extends Fragment {
                         Glide.with(getContext().getApplicationContext())
                                 .load(profileURL)
                                 .placeholder(R.drawable.ic_person)
+                                .circleCrop()
                                 .listener(new RequestListener<Drawable>() {
                                     @Override
                                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
@@ -356,7 +357,7 @@ public class Profile extends Fragment {
         if (IS_SEARCHED_USER)
             return;
 
-        ContextWrapper contextWrapper = new ContextWrapper(getContext().getApplicationContext());
+        ContextWrapper contextWrapper = new ContextWrapper(getActivity().getApplicationContext());
         File directory = contextWrapper.getDir("image_data", Context.MODE_PRIVATE);
         if(!directory.exists())
             directory.mkdir();

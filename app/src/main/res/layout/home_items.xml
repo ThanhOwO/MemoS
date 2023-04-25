@@ -56,12 +56,12 @@
         android:orientation="horizontal"
         android:layout_below="@+id/imageView">
 
-        <ImageButton
+        <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/likeBtn"
             android:layout_margin="8dp"
-            android:background="@drawable/ic_heart"/>
+            android:button="@drawable/heart_check" />
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -96,6 +96,46 @@
         android:layout_below="@+id/linearLayout"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/commentTV"
+        android:text="View all comment"
+        android:layout_below="@+id/likecountTv"
+        android:padding="8dp"
+        android:visibility="gone"/>
+
+    <LinearLayout
+        android:id="@+id/commentLayout"
+        android:layout_width="380dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@+id/commentTV"
+        android:gravity="center_vertical"
+        android:background="@drawable/text_box"
+        android:layout_marginTop="10dp"
+        android:layout_centerInParent="true"
+        android:visibility="gone">
+
+        <EditText
+            android:id="@+id/commentET"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:hint="Comment here!"
+            android:layout_margin="6dp" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_send"
+            android:id="@+id/commentSendBtn"
+            android:layout_marginRight="15dp"/>
+
+    </LinearLayout>
+
 
 
 </RelativeLayout>
