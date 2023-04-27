@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.Comment">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/commentRecyclerView"
+        android:layout_above="@+id/commentLayout"/>
+
+    <LinearLayout
+        android:padding="6dp"
+        android:id="@+id/commentLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:layout_marginBottom="10dp">
+
+        <EditText
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:id="@+id/commentET"
+            android:background="@drawable/text_box"
+            android:padding="12dp"
+            android:hint="Enter your comment here!"/>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_send"
+            android:background="@drawable/ic_circle"
+            android:elevation="1dp"
+            android:layout_margin="6dp"
+            android:id="@+id/sendBtn"/>
+
+
+    </LinearLayout>
+
+
+
+</RelativeLayout>

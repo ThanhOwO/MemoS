@@ -24,6 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.Thanh.memos.FragmentReplacerActivity;
 import com.Thanh.memos.R;
 import com.Thanh.memos.adapter.HomeAdapter;
 import com.Thanh.memos.model.HomeModel;
@@ -72,7 +73,7 @@ public class Home extends Fragment {
 
 
         list = new ArrayList<>();
-        adapter = new HomeAdapter(list, getContext());
+        adapter = new HomeAdapter(list, getActivity());
         recyclerView.setAdapter(adapter);
 
         loadDataFromFirestorage();
@@ -98,43 +99,8 @@ public class Home extends Fragment {
 
             }
 
-            //Create event for comment post
-            @Override
-            public void onComment(int position, String id, String uid, String comment, LinearLayout commentLayout, EditText commentET) {
-                if (comment.isEmpty() || comment.equals(" ")){
-                    Toast.makeText(getContext(), "Please enter comment!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                CollectionReference reference = FirebaseFirestore.getInstance().collection("Users")
-                        .document(uid)
-                        .collection("Post Images")
-                        .document(id)
-                        .collection("Comments");
 
-                String commentID = reference.document().getId();
-
-                Map<String, Object> map = new HashMap<>();
-                map.put("uid", user.getUid());
-                map.put("comment", comment);
-                map.put("commentID", commentID);
-                map.put("postID", id);
-
-                reference.document(commentID)
-                        .set(map)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()){
-                                    commentET.setText("");
-                                    commentET.setVisibility(View.GONE);
-                                }
-                                else {
-                                    Toast.makeText(getContext(), "Cannot create comment"+task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
-            }
-
+            //Comment count
             @Override
             public void setCommentCount(TextView textView) {
 

@@ -1,6 +1,7 @@
 package com.Thanh.memos.fragments;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -128,8 +129,11 @@ public class CreateAccountFragment extends Fragment {
 
                             FirebaseUser user = auth.getCurrentUser();
 
+                            String image = "https://cdn-icons-png.flaticon.com/512/2815/2815428.png";
+
                             UserProfileChangeRequest.Builder request = new UserProfileChangeRequest.Builder();
                             request.setDisplayName(name);
+                            request.setPhotoUri(Uri.parse(image));
                             user.updateProfile(request.build());
 
                             user.sendEmailVerification()
