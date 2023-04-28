@@ -1,16 +1,28 @@
 package com.Thanh.memos;
 
+import static com.Thanh.memos.utils.Constrants.PREF_DIRECTORY;
+import static com.Thanh.memos.utils.Constrants.PREF_NAME;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import com.Thanh.memos.adapter.ViewPagerAdapter;
 import com.Thanh.memos.fragments.Search;
 import com.google.android.material.tabs.TabLayout;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 public class MainActivity extends AppCompatActivity implements Search.OnDataPass {
 
@@ -42,7 +54,12 @@ public class MainActivity extends AppCompatActivity implements Search.OnDataPass
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_search));
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_add));
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_heart));
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_profile));
+
+        SharedPreferences preferences = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
+        String directory = preferences.getString(PREF_DIRECTORY, "");
+        Bitmap bitmap = loadProfileImage(directory);
+        Drawable drawable = new BitmapDrawable(getResources(), bitmap);
+        tabLayout.addTab(tabLayout.newTab().setIcon(drawable));
 
         tabLayout.setTabGravity(TabLayout.GRAVITY_CENTER);
         tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
@@ -71,9 +88,9 @@ public class MainActivity extends AppCompatActivity implements Search.OnDataPass
                     case 3:
                         tabLayout.getTabAt(3).setIcon(R.drawable.ic_heart_fill);
                         break;
-                    case 4:
+                    /*case 4:
                         tabLayout.getTabAt(4).setIcon(android.R.drawable.ic_menu_help);
-                        break;
+                        break;*/
 
                 }
             }
@@ -93,9 +110,9 @@ public class MainActivity extends AppCompatActivity implements Search.OnDataPass
                     case 3:
                         tabLayout.getTabAt(3).setIcon(R.drawable.ic_heart);
                         break;
-                    case 4:
+                    /*case 4:
                         tabLayout.getTabAt(4).setIcon(R.drawable.ic_profile);
-                        break;
+                        break;*/
 
                 }
             }
@@ -116,14 +133,24 @@ public class MainActivity extends AppCompatActivity implements Search.OnDataPass
                     case 3:
                         tabLayout.getTabAt(3).setIcon(R.drawable.ic_heart_fill);
                         break;
-                    case 4:
+                    /*case 4:
                         tabLayout.getTabAt(4).setIcon(android.R.drawable.ic_menu_help);
-                        break;
+                        break;*/
 
                 }
 
             }
         });
+    }
+
+    private Bitmap loadProfileImage(String directory){
+        try {
+            File file = new File(directory, "profile.png");
+            return BitmapFactory.decodeStream(new FileInputStream(file));
+        }catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public static String USER_ID;

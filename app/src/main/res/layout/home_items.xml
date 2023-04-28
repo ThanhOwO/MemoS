@@ -56,12 +56,12 @@
         android:orientation="horizontal"
         android:layout_below="@+id/imageView">
 
-        <ImageButton
+        <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/likeBtn"
             android:layout_margin="8dp"
-            android:background="@drawable/ic_heart"/>
+            android:button="@drawable/heart_check" />
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -96,6 +96,16 @@
         android:layout_below="@+id/linearLayout"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/commentTV"
+        android:text="View all comment"
+        android:layout_below="@+id/likecountTv"
+        android:padding="8dp"
+        android:visibility="gone"/>
+
 
 
 </RelativeLayout>

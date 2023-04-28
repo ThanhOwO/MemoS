@@ -148,16 +148,18 @@ public class Add extends Fragment {
         String id = reference.document().getId();
         String description = descET.getText().toString();
 
+        List<String> list =new ArrayList<>();
+
         Map<String, Object> map = new HashMap<>();
         map.put("id", id);
         map.put("description", description);
         map.put("imageUrl", imageURL);
         map.put("timestamp", FieldValue.serverTimestamp());
 
-        map.put("userName", user.getDisplayName());
+        map.put("name", user.getDisplayName());
         map.put("profileImage", String.valueOf(user.getPhotoUrl()));
-        map.put("likeCount", 0);
-        map.put("comments", "");
+        map.put("likes", list);
+        map.put("comments", list);
         map.put("uid", user.getUid());
 
         reference.document(id).set(map)
@@ -213,6 +215,9 @@ public class Add extends Fragment {
                                     if(file.exists()) {
                                         File[] files = file.listFiles();
                                         assert files != null;
+
+                                        list.clear();
+
                                         for (File file1 : files) {
                                             if (file1.getAbsolutePath().endsWith(".jpg") || file1.getAbsolutePath().endsWith(".png")) {
                                                 list.add(new GalleryImages(Uri.fromFile(file1)));

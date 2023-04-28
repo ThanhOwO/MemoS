@@ -135,7 +135,7 @@
                 android:id="@+id/followingCountTv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="250"
+                android:text="0"
                 android:textStyle="bold"
                 android:textColor="@color/colorAccent"
                 android:textAlignment="center"/>
@@ -160,7 +160,7 @@
                 android:id="@+id/followerCountTv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="25k"
+                android:text="0"
                 android:textStyle="bold"
                 android:textColor="@color/colorAccent"
                 android:textAlignment="center"/>
@@ -185,7 +185,7 @@
                 android:id="@+id/postCountTv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="178"
+                android:text="0"
                 android:textStyle="bold"
                 android:textColor="@color/colorAccent"
                 android:textAlignment="center"/>
@@ -202,6 +202,7 @@
     </LinearLayout>
 
         <Button
+            android:layout_below="@+id/countLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Follow"
@@ -212,7 +213,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="20dp"
             android:id="@+id/followBtn"
-            android:visibility="gone"/>
+            android:visibility="visible"/>
 
     </RelativeLayout>
 

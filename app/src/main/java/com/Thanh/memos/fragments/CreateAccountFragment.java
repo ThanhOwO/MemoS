@@ -1,6 +1,7 @@
 package com.Thanh.memos.fragments;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -27,7 +28,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class CreateAccountFragment extends Fragment {
@@ -126,8 +129,11 @@ public class CreateAccountFragment extends Fragment {
 
                             FirebaseUser user = auth.getCurrentUser();
 
+                            String image = "https://cdn-icons-png.flaticon.com/512/2815/2815428.png";
+
                             UserProfileChangeRequest.Builder request = new UserProfileChangeRequest.Builder();
                             request.setDisplayName(name);
+                            request.setPhotoUri(Uri.parse(image));
                             user.updateProfile(request.build());
 
                             user.sendEmailVerification()
@@ -152,16 +158,19 @@ public class CreateAccountFragment extends Fragment {
 
     //Put user into cloud database
     private void uploadUser(FirebaseUser user, String name, String email){
+        List<String> list = new ArrayList<>();
+        List<String> list1 = new ArrayList<>();
         Map<String, Object> map = new HashMap<>();
 
         map.put("name", name);
         map.put("email", email);
         map.put("profileImage", " ");
         map.put("uid", user.getUid());
-        map.put("following", 0);
-        map.put("followers", 0);
         map.put("status","");
         map.put("search", name.toLowerCase());
+        map.put("followers", list);
+        map.put("following", list1);
+
 
 
         FirebaseFirestore.getInstance().collection("Users").document(user.getUid())

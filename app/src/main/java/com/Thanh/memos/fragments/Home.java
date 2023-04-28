@@ -1,5 +1,7 @@
 package com.Thanh.memos.fragments;
 
+
+import android.app.Activity;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -7,6 +9,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -14,31 +19,40 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.Thanh.memos.FragmentReplacerActivity;
 import com.Thanh.memos.R;
 import com.Thanh.memos.adapter.HomeAdapter;
 import com.Thanh.memos.model.HomeModel;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Home extends Fragment {
-
     private RecyclerView recyclerView;
     HomeAdapter adapter;
     private List<HomeModel> list;
     private FirebaseUser user;
-    public static int LIST_SIZE = 0;
+    private final MutableLiveData<Integer> commentCount = new MutableLiveData<>();
+
 
     public Home() {
         // Required empty public constructor
@@ -57,17 +71,63 @@ public class Home extends Fragment {
 
         init(view);
 
+
         list = new ArrayList<>();
-        adapter = new HomeAdapter(list, getContext());
+        adapter = new HomeAdapter(list, getActivity());
         recyclerView.setAdapter(adapter);
 
         loadDataFromFirestorage();
+
+        //Create event for like, unlike post
+        adapter.OnPressed(new HomeAdapter.OnPressed() {
+            @Override
+            public void onLiked(int position, String id, String uid, List<String> likeList, boolean isChecked) {
+                DocumentReference reference = FirebaseFirestore.getInstance().collection("Users")
+                        .document(uid)
+                        .collection("Post Images")
+                        .document(id);
+                if (likeList.contains(user.getUid())) {
+                    likeList.remove(user.getUid()); //unlike
+
+                } else {
+                    likeList.add(user.getUid()); //like
+                }
+
+                Map<String, Object> map = new HashMap<>();
+                map.put("likes", likeList);
+                reference.update(map);
+
+            }
+
+
+            //Comment count
+            @Override
+            public void setCommentCount(TextView textView) {
+
+                Activity activity = getActivity();
+
+                commentCount.observe((LifecycleOwner) activity, new Observer<Integer>() {
+                    @Override
+                    public void onChanged(Integer integer) {
+                        if(commentCount.getValue() == 0){
+                            textView.setVisibility(View.GONE);
+                        }else {
+                            textView.setVisibility(View.VISIBLE);
+                        }
+                        textView.setText("See all " + commentCount.getValue() + " comments");
+                    }
+                });
+
+
+
+            }
+        });
     }
 
-    private void init(View view){
+    private void init(View view) {
 
         Toolbar toolbar = view.findViewById(R.id.toolbar);
-        if(getActivity() != null)
+        if (getActivity() != null)
             ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
 
         recyclerView = view.findViewById(R.id.recyclerView);
@@ -79,45 +139,100 @@ public class Home extends Fragment {
     }
 
     //get data from Firebase storage
-    private void loadDataFromFirestorage(){
+    private void loadDataFromFirestorage() {
 
-        CollectionReference reference = FirebaseFirestore.getInstance().collection("Users")
-                        .document(user.getUid())
-                        .collection("Post Images");
-        reference.addSnapshotListener(new EventListener<QuerySnapshot>() {
+        final DocumentReference reference = FirebaseFirestore.getInstance().collection("Users")
+                .document(user.getUid());
+
+        CollectionReference collectionReference = FirebaseFirestore.getInstance().collection("Users");
+        reference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                if(error != null) {
-                    Log.e("Error: ", error.getMessage());
+            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (error != null){
+                    Log.d("Error", error.getMessage());
                     return;
                 }
 
-                if(value == null)
+                if (value == null)
                     return;
-                list.clear();
 
-                for(QueryDocumentSnapshot snapshot : value){
+                //Create comment for post
 
-                    if(!snapshot.exists())
-                        return;
+                List<String> uidList = (List<String>) value.get("following");
 
-                    HomeModel model = snapshot.toObject(HomeModel.class);
-                    list.add(new HomeModel(
-                            model.getUserName(),
-                            model.getProfileImage(),
-                            model.getImageUrl(),
-                            model.getUid(),
-                            model.getComments(),
-                            model.getDescription(),
-                            model.getId(),
-                            model.getTimestamp(),
-                            model.getLikeCount()
-                    ));
-                }
-                adapter.notifyDataSetChanged();
+                if (uidList == null || uidList.isEmpty())
+                    return;
 
-                LIST_SIZE = list.size();
+                collectionReference.whereIn("uid", uidList)
+                        .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                            @Override
+                            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+
+                                if (error != null){
+                                    Log.d("Error", error.getMessage());
+                                }
+
+                                if (value == null)
+                                    return;
+
+                                for (QueryDocumentSnapshot snapshot : value){
+
+                                    snapshot.getReference().collection("Post Images")
+                                            .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                                @Override
+                                                public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                                                    if (error != null){
+                                                        Log.d("Error", error.getMessage());
+                                                    }
+
+                                                    if (value == null)
+                                                        return;
+
+                                                    list.clear();
+
+                                                    for (QueryDocumentSnapshot snapshot : value){
+                                                        //post data
+                                                            if (!snapshot.exists())
+                                                                return;
+
+                                                            HomeModel model = snapshot.toObject(HomeModel.class);
+                                                            list.add(new HomeModel(
+                                                                    model.getName(),
+                                                                    model.getProfileImage(),
+                                                                    model.getImageUrl(),
+                                                                    model.getUid(),
+                                                                    model.getDescription(),
+                                                                    model.getId(),
+                                                                    model.getTimestamp(),
+                                                                    model.getLikes()
+                                                            ));
+
+                                                            snapshot.getReference().collection("Comments").get()
+                                                                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                                @Override
+                                                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                                    if (task.isSuccessful()){
+
+                                                                                        int count = 0;
+                                                                                        for (QueryDocumentSnapshot documentSnapshot : task.getResult()){
+                                                                                            count++;
+                                                                                        }
+                                                                                        commentCount.setValue(count);
+                                                                                        //comment count
+                                                                                    }
+                                                                                }
+                                                                            });
+
+                                                        adapter.notifyDataSetChanged();
+                                                    }
+                                                }
+                                            });
+                                }
+
+                            }
+                        });
             }
+
         });
     }
 }

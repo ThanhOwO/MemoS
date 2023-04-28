@@ -3,37 +3,35 @@ package com.Thanh.memos.model;
 import com.google.firebase.firestore.ServerTimestamp;
 
 import java.util.Date;
+import java.util.List;
 
 public class HomeModel {
-    private String userName, profileImage, imageUrl, uid, comments, description, id;
+    private String name, profileImage, imageUrl, uid, description, id;
     @ServerTimestamp
     private Date timestamp;
-    private int likeCount;
+    private List<String> likes;
 
     public HomeModel() {
         // Default constructor required for Firebase Firestore serialization
     }
 
-    public HomeModel(String userName, String profileImage, String imageUrl, String uid, String comments, String description, String id, Date timestamp, int likeCount) {
-        this.userName = userName;
+    public HomeModel(String name, String profileImage, String imageUrl, String uid, String description, String id, Date timestamp, List<String> likes) {
+        this.name = name;
         this.profileImage = profileImage;
         this.imageUrl = imageUrl;
         this.uid = uid;
-        this.comments = comments;
         this.description = description;
         this.id = id;
         this.timestamp = timestamp;
-        this.likeCount = likeCount;
-
-
+        this.likes = likes;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getName() {
+        return name;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getProfileImage() {
@@ -60,14 +58,6 @@ public class HomeModel {
         this.uid = uid;
     }
 
-    public String getComments() {
-        return comments;
-    }
-
-    public void setComments(String comments) {
-        this.comments = comments;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -92,13 +82,11 @@ public class HomeModel {
         this.timestamp = timestamp;
     }
 
-    public int getLikeCount() {
-        return likeCount;
+    public List<String> getLikes() {
+        return likes;
     }
 
-    public void setLikeCount(int likeCount) {
-        this.likeCount = likeCount;
+    public void setLikes(List<String> likes) {
+        this.likes = likes;
     }
-
-
 }
