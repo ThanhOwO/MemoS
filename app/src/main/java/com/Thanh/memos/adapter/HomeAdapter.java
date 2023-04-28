@@ -96,7 +96,13 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeHolder> {
                 .timeout(7000)
                 .into(holder.imageView);
 
-        holder.clickListener(position, list.get(position).getId(), list.get(position).getName(), list.get(position).getUid(), list.get(position).getLikes());
+        holder.clickListener(position,
+                list.get(position).getId(),
+                list.get(position).getName(),
+                list.get(position).getUid(),
+                list.get(position).getLikes(),
+                list.get(position).getImageUrl()
+        );
 
 
     }
@@ -142,7 +148,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeHolder> {
             onPressed.setCommentCount(commentTV);
         }
 
-        public void clickListener(final int position, final String id, String name, final String uid, List<String> likes) {
+        public void clickListener(final int position, final String id, String name, final String uid, final List<String> likes, String imageUrl) {
 
             commentBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -163,6 +169,16 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeHolder> {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                     onPressed.onLiked(position, id, uid, likes, isChecked);
+                }
+            });
+
+            shareBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(Intent.ACTION_SEND);
+                    intent.putExtra(Intent.EXTRA_TEXT, imageUrl);
+                    intent.setType("text/*");
+                    context.startActivity(Intent.createChooser(intent, "Share link using..."));
                 }
             });
 
