@@ -27,7 +27,9 @@ import android.widget.Toast;
 import com.Thanh.memos.FragmentReplacerActivity;
 import com.Thanh.memos.R;
 import com.Thanh.memos.adapter.HomeAdapter;
+import com.Thanh.memos.adapter.StoriesAdapter;
 import com.Thanh.memos.model.HomeModel;
+import com.Thanh.memos.model.StoriesModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -38,8 +40,10 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,6 +56,9 @@ public class Home extends Fragment {
     private List<HomeModel> list;
     private FirebaseUser user;
     private final MutableLiveData<Integer> commentCount = new MutableLiveData<>();
+    RecyclerView storiesRecyclerView;
+    StoriesAdapter storiesAdapter;
+    List<StoriesModel> storiesModelList;
 
 
     public Home() {
@@ -134,6 +141,15 @@ public class Home extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        storiesRecyclerView = view.findViewById(R.id.storiesRecyclerView);
+        storiesRecyclerView.setHasFixedSize(true);
+        storiesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+
+        storiesModelList = new ArrayList<>();
+        storiesModelList.add(new StoriesModel("", "", "", "",""));
+        storiesAdapter = new StoriesAdapter(storiesModelList, getActivity());
+        storiesRecyclerView.setAdapter(storiesAdapter);
+
         FirebaseAuth auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
     }
@@ -156,7 +172,7 @@ public class Home extends Fragment {
                 if (value == null)
                     return;
 
-                //Create comment for post
+                //get post only user that followed
 
                 List<String> uidList = (List<String>) value.get("following");
 
@@ -207,6 +223,7 @@ public class Home extends Fragment {
                                                                     model.getLikes()
                                                             ));
 
+                                                            //get comment from database firebase
                                                             snapshot.getReference().collection("Comments").get()
                                                                             .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                                                                 @Override
@@ -228,11 +245,38 @@ public class Home extends Fragment {
                                                 }
                                             });
                                 }
-
                             }
                         });
-            }
 
+                //fetch stories
+                loadStories(uidList);
+            }
+        });
+    }
+
+    //get stories from firebase database
+    void loadStories(List<String> followingList){
+        Query query = FirebaseFirestore.getInstance().collection("Stories");
+        query.whereIn("uid", followingList).addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (error != null){
+                    Log.d("Error", error.getMessage());
+                }
+
+                if (value == null)
+                    return;
+
+                for (QueryDocumentSnapshot snapshot : value){
+
+                    if(!value.isEmpty()){
+                        StoriesModel model = snapshot.toObject(StoriesModel.class);
+                        storiesModelList.add(model);
+                    }
+
+                }
+                storiesAdapter.notifyDataSetChanged();
+            }
         });
     }
 }

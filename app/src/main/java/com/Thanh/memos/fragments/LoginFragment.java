@@ -42,7 +42,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class LoginFragment extends Fragment {
@@ -221,18 +223,21 @@ public class LoginFragment extends Fragment {
     }
 
 
-    //Update user information to store a user object in Firebase Firestore
+    //Update Google user information to store a user object in Firebase Firestore
     private void updateUI(FirebaseUser user){
 
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getActivity());
+        List<String> list = new ArrayList<>();
+        List<String> list1 = new ArrayList<>();
         Map<String, Object> map = new HashMap<>();
 
         map.put("name", account.getDisplayName());
         map.put("email", account.getEmail());
         map.put("profileImage", String.valueOf(account.getPhotoUrl()));
         map.put("uid", user.getUid());
-        map.put("following", 0);
-        map.put("followers", 0);
+        map.put("search", account.getDisplayName().toLowerCase());
+        map.put("following", list);
+        map.put("followers", list1);
         map.put("status", "");
 
         FirebaseFirestore.getInstance().collection("Users").document(user.getUid())
@@ -241,7 +246,7 @@ public class LoginFragment extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if(task.isSuccessful()){
-                            assert getActivity() != null;
+
                             progressBar.setVisibility(View.GONE);
                             sendUserToMainActivity();
 

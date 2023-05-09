@@ -26,6 +26,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -33,6 +34,8 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -89,8 +92,6 @@ public class Comment extends Fragment {
                     return;
                 }
 
-
-
                 String commentID = reference.document().getId();
 
                 Map<String, Object> map = new HashMap<>();
@@ -108,6 +109,7 @@ public class Comment extends Fragment {
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()){
                                     commentEt.setText("");
+
                                 }
                                 else {
                                     Toast.makeText(getContext(), "Cannot create comment"+task.getException().getMessage(), Toast.LENGTH_SHORT).show();
@@ -129,11 +131,22 @@ public class Comment extends Fragment {
                     return;
                 }
 
-                for (QueryDocumentSnapshot snapshot : value){
+                if(list != null) {
+                    list.clear();
+                }
+
+                for (DocumentSnapshot snapshot : value){
                     CommentModel model = snapshot.toObject(CommentModel.class);
 
                     list.add(model);
                 }
+                Collections.sort(list, new Comparator<CommentModel>() {
+                    @Override
+                    public int compare(CommentModel o1, CommentModel o2) {
+                        return o1.getCommentID().compareTo(o2.getCommentID());
+                    }
+                });
+
                 commentAdapter.notifyDataSetChanged();
             }
         });
