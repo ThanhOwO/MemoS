@@ -11,9 +11,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -36,6 +38,8 @@ public class StoryAddActivity extends AppCompatActivity {
     VideoView videoView;
     FirebaseUser user;
     ImageButton uploadButton;
+    StylishAlertDialog alertDialog;
+    ImageView imageView;
 
     private static final int SELECT_VIDEO = 101;
 
@@ -52,7 +56,7 @@ public class StoryAddActivity extends AppCompatActivity {
                     uploadButton.setOnClickListener(view -> {
                         uploadButton.setVisibility(View.GONE);
                         videoView.pause();
-                        uploadVideoToStorage(uri);
+                        uploadFileToStorage(uri, "video");
                     });
 
                 } else {
@@ -68,14 +72,14 @@ public class StoryAddActivity extends AppCompatActivity {
 
         init();
 
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType("video/*");
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("image/* video/*");
+        intent.putExtra(Intent.EXTRA_MIME_TYPES, "image/* video/*");
         startActivityForResult(intent, SELECT_VIDEO);
     }
 
-    StylishAlertDialog alertDialog;
-
-    void uploadVideoToStorage(Uri uri){
+    void uploadFileToStorage(Uri uri, String type){
 
         alertDialog = new StylishAlertDialog(this, StylishAlertDialog.PROGRESS);
         alertDialog.setTitleText("Uploading...").setCancelable(false);
@@ -83,15 +87,27 @@ public class StoryAddActivity extends AppCompatActivity {
 
         File file = new File(uri.getPath());
 
-        StorageReference storageReference =  FirebaseStorage.getInstance().getReference().child("Stories/"+System.currentTimeMillis()+".mp4");
+        String fileName;
+        if(type.contains("image")){
+            fileName = System.currentTimeMillis() + ".png";
+            uploadImagetoStorage(fileName, uri, type);
+        }else {
+            fileName = System.currentTimeMillis()+".mp4";
+            uploadVideotoStorage(new File(fileName), uri, type);
+        }
+
+    }
+
+    void uploadImagetoStorage(String fileName, Uri uri, String type){
+        StorageReference storageReference =  FirebaseStorage.getInstance().getReference().child("Stories/" + fileName);
 
 
-        storageReference.putFile(Uri.fromFile(file)).addOnCompleteListener(task -> {
+        storageReference.putFile(uri).addOnCompleteListener(task -> {
             if (task.isSuccessful()){
 
                 assert task.getResult() != null;
                 task.getResult().getStorage().getDownloadUrl().addOnSuccessListener(uri1 -> {
-                    uploadVideoDatatoFirestore(String.valueOf(uri1));
+                    uploadVideoDatatoFirestore(String.valueOf(uri1), type);
                 });
             }else {
                 alertDialog.dismissWithAnimation();
@@ -102,16 +118,38 @@ public class StoryAddActivity extends AppCompatActivity {
         });
     }
 
-    void uploadVideoDatatoFirestore(String url){
+    void uploadVideotoStorage(File fileName, Uri uri, String type){
+        File file = new File(uri.getPath());
+        StorageReference storageReference =  FirebaseStorage.getInstance().getReference().child("Stories/" + fileName);
+
+
+        storageReference.putFile(Uri.fromFile(file)).addOnCompleteListener(task -> {
+            if (task.isSuccessful()){
+
+                assert task.getResult() != null;
+                task.getResult().getStorage().getDownloadUrl().addOnSuccessListener(uri1 -> {
+                    uploadVideoDatatoFirestore(String.valueOf(uri1), type);
+                });
+            }else {
+                alertDialog.dismissWithAnimation();
+                assert task.getException() != null;
+                String error = task.getException().getMessage();
+                Toast.makeText(StoryAddActivity.this, "Error: " + error, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    void uploadVideoDatatoFirestore(String url, String type){
 
         CollectionReference reference = FirebaseFirestore.getInstance().collection("Stories");
 
         String id = reference.document().getId();
 
         Map<String, Object> map = new HashMap<>();
-        map.put("videoUrl", url);
+        map.put("url", url);
         map.put("id", id);
         map.put("uid", user.getUid());
+        map.put("type", type);
         map.put("name", user.getDisplayName());
 
         reference.document(id)
@@ -124,6 +162,7 @@ public class StoryAddActivity extends AppCompatActivity {
     void init(){
         videoView = findViewById(R.id.videoView);
         uploadButton = findViewById(R.id.uploadStory);
+        imageView = findViewById(R.id.imageView);
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
@@ -137,12 +176,32 @@ public class StoryAddActivity extends AppCompatActivity {
 
             Uri uri = data.getData();
 
-            TrimVideo.activity(String.valueOf(uri))
-                    .setCompressOption(new CompressOption())
-                    .setTrimType(TrimType.MIN_MAX_DURATION)
-                    .setMinToMax(5, 30)
-                    .setHideSeekBar(true)
-                    .start(this,startForResult);
+            if(uri.toString().contains("image")){
+                //image selected
+                videoView.setVisibility(View.GONE);
+                imageView.setVisibility(View.VISIBLE);
+
+                Glide.with(StoryAddActivity.this)
+                        .load(uri)
+                        .into(imageView);
+
+                uploadButton.setVisibility(View.VISIBLE);
+                uploadButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        uploadButton.setVisibility(View.GONE);
+                        uploadFileToStorage(uri, "image");
+                    }
+                });
+
+            }else if(uri.toString().contains("video")){
+                TrimVideo.activity(String.valueOf(uri))
+                        .setCompressOption(new CompressOption())
+                        .setTrimType(TrimType.MIN_MAX_DURATION)
+                        .setMinToMax(5, 30)
+                        .setHideSeekBar(true)
+                        .start(this,startForResult);
+            }
         }else {
             Toast.makeText(StoryAddActivity.this, "Cannot trim this video.", Toast.LENGTH_SHORT).show();
         }

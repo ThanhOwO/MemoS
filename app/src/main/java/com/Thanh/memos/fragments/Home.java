@@ -146,7 +146,7 @@ public class Home extends Fragment {
         storiesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
 
         storiesModelList = new ArrayList<>();
-        storiesModelList.add(new StoriesModel("", "", "", ""));
+        storiesModelList.add(new StoriesModel("", "", "", "",""));
         storiesAdapter = new StoriesAdapter(storiesModelList, getActivity());
         storiesRecyclerView.setAdapter(storiesAdapter);
 
@@ -254,7 +254,7 @@ public class Home extends Fragment {
         });
     }
 
-    //get video stories from firebase database
+    //get stories from firebase database
     void loadStories(List<String> followingList){
         Query query = FirebaseFirestore.getInstance().collection("Stories");
         query.whereIn("uid", followingList).addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -269,7 +269,7 @@ public class Home extends Fragment {
 
                 for (QueryDocumentSnapshot snapshot : value){
 
-                    if(value.isEmpty()){
+                    if(!value.isEmpty()){
                         StoriesModel model = snapshot.toObject(StoriesModel.class);
                         storiesModelList.add(model);
                     }

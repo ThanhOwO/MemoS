@@ -1,5 +1,6 @@
 package com.Thanh.memos.adapter;
 
+import static com.Thanh.memos.ViewStoryActivity.FILE_TYPE;
 import static com.Thanh.memos.ViewStoryActivity.VIDEO_URL_KEY;
 
 import android.Manifest;
@@ -67,7 +68,7 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.StoriesH
         }else{
             //load stories video
             Glide.with(activity)
-                    .load(list.get(position).getVideoUrl())
+                    .load(list.get(position).getUrl())
                     .timeout(6500)
                     .into(holder.imageView);
             holder.imageView.setOnClickListener(new View.OnClickListener() {
@@ -102,7 +103,8 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.StoriesH
                     }else{
                         //open story
                         Intent intent = new Intent(activity, ViewStoryActivity.class);
-                        intent.putExtra(VIDEO_URL_KEY, list.get(position).getVideoUrl());
+                        intent.putExtra(VIDEO_URL_KEY, list.get(position).getUrl());
+                        intent.putExtra(FILE_TYPE, list.get(position).getType());
                         activity.startActivity(intent);
                     }
 

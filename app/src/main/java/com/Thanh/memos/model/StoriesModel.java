@@ -1,24 +1,25 @@
 package com.Thanh.memos.model;
 
 public class StoriesModel {
-    String videoUrl, id, name, uid;
+    String url, id, name, uid, type;
 
     public StoriesModel() {
     }
 
-    public StoriesModel(String videoUrl, String id, String name, String uid) {
-        this.videoUrl = videoUrl;
+    public StoriesModel(String url, String id, String name, String uid, String type) {
+        this.url = url;
         this.id = id;
         this.name = name;
         this.uid = uid;
+        this.type = type;
     }
 
-    public String getVideoUrl() {
-        return videoUrl;
+    public String getUrl() {
+        return url;
     }
 
-    public void setVideoUrl(String videoUrl) {
-        this.videoUrl = videoUrl;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public String getId() {
@@ -43,5 +44,13 @@ public class StoriesModel {
 
     public void setUid(String uid) {
         this.uid = uid;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }
