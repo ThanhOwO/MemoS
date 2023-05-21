@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".chat.ChatActivity"
+    android:background="@color/white">
+
+    <RelativeLayout
+        android:layout_marginTop="12dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/topLayout"
+        android:padding="8dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:id="@+id/profileImage"
+            android:src="#2EFF00"
+            android:layout_centerVertical="true"
+            app:civ_border_color="@color/colorAccent"
+            app:civ_border_width="2dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_marginStart="10dp"
+            android:layout_centerVertical="true"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/profileImage"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/nameTV"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:text="Name....."
+                android:textColor="@color/black"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/statusTV"
+                android:textStyle="bold"
+                android:textColor="#2FD500"
+                android:text="Online"
+                android:textSize="12sp"/>
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/chatLayout"
+        android:layout_below="@id/topLayout"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/chatLayout"
+        android:layout_alignParentBottom="true"
+        android:padding="6dp">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/chatET"
+            android:padding="12dp"
+            android:hint="Type here...."
+            android:background="@drawable/text_box"
+            android:backgroundTint="#D8D8D8"
+            android:layout_toStartOf="@id/sendBtn"
+            android:layout_marginEnd="4dp"
+            tools:ignore="HardcodedText" />
+
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:id="@+id/sendBtn"
+            android:background="@drawable/ic_circle"
+            android:backgroundTint="@color/colorAccent"
+            android:padding="8dp"
+            android:src="@drawable/ic_send_white"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>
