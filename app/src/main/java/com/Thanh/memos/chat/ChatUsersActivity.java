@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.Thanh.memos.R;
@@ -36,6 +37,8 @@ public class ChatUsersActivity extends AppCompatActivity {
         init();
 
         fetchUserData();
+
+        clickListener();
     }
 
     void init(){
@@ -65,12 +68,32 @@ public class ChatUsersActivity extends AppCompatActivity {
 
                         list.clear();
                         for(QueryDocumentSnapshot snapshot : value){
-                            ChatUserModel model = snapshot.toObject(ChatUserModel.class);
-                            list.add(model);
+                            if (snapshot.exists()){
+                                ChatUserModel model = snapshot.toObject(ChatUserModel.class);
+                                list.add(model);
+                            }
                         }
 
                         adapter.notifyDataSetChanged();
                     }
                 });
+    }
+
+    void clickListener(){
+        adapter.OnStartChat(new ChatUserAdapter.OnStartChat() {
+            @Override
+            public void clicked(int position, List<String> uids, String chatID) {
+                String oppositeUID;
+                if (!uids.get(0).equalsIgnoreCase(user.getUid())){
+                    oppositeUID = uids.get(0);
+                }else {
+                    oppositeUID = uids.get(1);
+                }
+                Intent intent = new Intent(ChatUsersActivity.this, ChatActivity.class);
+                intent.putExtra("uid", oppositeUID);
+                intent.putExtra("id", chatID);
+                startActivity(intent);
+            }
+        });
     }
 }

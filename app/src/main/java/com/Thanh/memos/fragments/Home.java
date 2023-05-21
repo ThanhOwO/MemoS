@@ -2,6 +2,7 @@ package com.Thanh.memos.fragments;
 
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -20,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,6 +30,7 @@ import com.Thanh.memos.FragmentReplacerActivity;
 import com.Thanh.memos.R;
 import com.Thanh.memos.adapter.HomeAdapter;
 import com.Thanh.memos.adapter.StoriesAdapter;
+import com.Thanh.memos.chat.ChatUsersActivity;
 import com.Thanh.memos.model.HomeModel;
 import com.Thanh.memos.model.StoriesModel;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -59,6 +62,7 @@ public class Home extends Fragment {
     RecyclerView storiesRecyclerView;
     StoriesAdapter storiesAdapter;
     List<StoriesModel> storiesModelList;
+    ImageButton sendBtn;
 
 
     public Home() {
@@ -129,6 +133,14 @@ public class Home extends Fragment {
 
             }
         });
+
+        sendBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), ChatUsersActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void init(View view) {
@@ -136,7 +148,7 @@ public class Home extends Fragment {
         Toolbar toolbar = view.findViewById(R.id.toolbar);
         if (getActivity() != null)
             ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-
+        sendBtn = view.findViewById(R.id.sendBtn);
         recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -267,6 +279,7 @@ public class Home extends Fragment {
                 if (value == null)
                     return;
 
+                list.clear();
                 for (QueryDocumentSnapshot snapshot : value){
 
                     if(!value.isEmpty()){

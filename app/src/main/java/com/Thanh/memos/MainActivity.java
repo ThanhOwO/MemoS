@@ -19,10 +19,14 @@ import android.os.Bundle;
 import com.Thanh.memos.adapter.ViewPagerAdapter;
 import com.Thanh.memos.fragments.Search;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements Search.OnDataPass {
 
@@ -175,5 +179,27 @@ public class MainActivity extends AppCompatActivity implements Search.OnDataPass
         }
         else
             super.onBackPressed();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateStatus(true);
+    }
+
+    @Override
+    protected void onPause() {
+        updateStatus(false);
+        super.onPause();
+    }
+
+    void updateStatus(boolean status){
+        Map<String, Object> map = new HashMap<>();
+        map.put("online", status);
+
+        FirebaseFirestore.getInstance()
+                .collection("Users")
+                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .update(map);
     }
 }

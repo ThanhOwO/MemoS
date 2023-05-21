@@ -201,19 +201,45 @@
 
     </LinearLayout>
 
-        <Button
-            android:layout_below="@+id/countLayout"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Follow"
-            android:background="@drawable/btn_bg"
-            android:textColor="@color/white"
-            android:textStyle="bold"
-            android:minWidth="160dp"
+            android:orientation="horizontal"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
-            android:id="@+id/followBtn"
-            android:visibility="visible"/>
+            android:layout_below="@+id/countLayout"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="20dp">
+
+            <Button
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Follow"
+                android:background="@drawable/btn_bg"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:minWidth="160dp"
+                android:id="@+id/followBtn"
+                android:visibility="visible"
+                android:layout_marginEnd="4dp"/>
+
+            <Button
+                android:layout_below="@+id/countLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Message"
+                android:background="@drawable/btn_bg"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:minWidth="160dp"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/startChatBtn"
+                android:visibility="visible"
+                android:layout_marginStart="4dp"/>
+
+        </LinearLayout>
+
+
 
     </RelativeLayout>
 

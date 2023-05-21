@@ -39,14 +39,11 @@
 
     </RelativeLayout>
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/layout">
-
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:id="@+id/piclayout"
+            android:layout_below="@id/layout">
 
         <EditText
             android:layout_width="match_parent"
@@ -74,13 +71,18 @@
             android:background="@color/colorAccent"
             android:scaleType="centerCrop"/>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/recyclerView"
-            android:layout_below="@id/imageView"/>
+
 
         </RelativeLayout>
-    </ScrollView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/recyclerView"
+            android:layout_below="@id/piclayout"
+            android:layout_marginTop="10dp"/>
+
+
+
 
 </RelativeLayout>

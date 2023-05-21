@@ -89,7 +89,7 @@ public class Add extends Fragment {
 
         init(view);
 
-        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 4));
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
         recyclerView.setHasFixedSize(true);
 
         list = new ArrayList<>();

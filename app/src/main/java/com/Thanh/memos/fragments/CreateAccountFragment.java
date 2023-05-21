@@ -172,7 +172,6 @@ public class CreateAccountFragment extends Fragment {
         map.put("following", list1);
 
 
-
         FirebaseFirestore.getInstance().collection("Users").document(user.getUid())
                 .set(map)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {

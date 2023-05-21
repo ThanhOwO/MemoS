@@ -1,16 +1,25 @@
 package com.Thanh.memos.model;
 
+import com.google.firebase.firestore.ServerTimestamp;
+
+import java.util.Date;
+import java.util.List;
+
 public class ChatUserModel {
-    private String id, userUid, name, imageURL;
+    private String id, lastMessage;
+    private List<String> uid;
+
+    @ServerTimestamp
+    private Date time;
 
     public ChatUserModel() {
     }
 
-    public ChatUserModel(String id, String userUid, String name, String imageURL) {
+    public ChatUserModel(String id, String lastMessage, List<String> uid, Date time) {
         this.id = id;
-        this.userUid = userUid;
-        this.name = name;
-        this.imageURL = imageURL;
+        this.lastMessage = lastMessage;
+        this.uid = uid;
+        this.time = time;
     }
 
     public String getId() {
@@ -21,27 +30,27 @@ public class ChatUserModel {
         this.id = id;
     }
 
-    public String getUserUid() {
-        return userUid;
+    public String getLastMessage() {
+        return lastMessage;
     }
 
-    public void setUserUid(String userUid) {
-        this.userUid = userUid;
+    public void setLastMessage(String lastMessage) {
+        this.lastMessage = lastMessage;
     }
 
-    public String getName() {
-        return name;
+    public List<String> getUid() {
+        return uid;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUid(List<String> uid) {
+        this.uid = uid;
     }
 
-    public String getImageURL() {
-        return imageURL;
+    public Date getTime() {
+        return time;
     }
 
-    public void setImageURL(String imageURL) {
-        this.imageURL = imageURL;
+    public void setTime(Date time) {
+        this.time = time;
     }
 }
