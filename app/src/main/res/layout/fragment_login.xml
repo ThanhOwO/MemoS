@@ -6,6 +6,7 @@
     tools:context=".fragments.CreateAccountFragment"
     android:background="@drawable/memosbg">
 
+
     <ImageView
         android:layout_width="215dp"
         android:layout_height="218dp"

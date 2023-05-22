@@ -92,9 +92,6 @@ public class MainActivity extends AppCompatActivity implements Search.OnDataPass
                     case 3:
                         tabLayout.getTabAt(3).setIcon(R.drawable.ic_heart_fill);
                         break;
-                    /*case 4:
-                        tabLayout.getTabAt(4).setIcon(android.R.drawable.ic_menu_help);
-                        break;*/
 
                 }
             }
