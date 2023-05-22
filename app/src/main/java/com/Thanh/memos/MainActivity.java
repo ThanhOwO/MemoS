@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements Search.OnDataPass
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_home));
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_search));
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_add));
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_heart));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_bell));
 
         SharedPreferences preferences = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
         String directory = preferences.getString(PREF_DIRECTORY, "");
@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements Search.OnDataPass
                         tabLayout.getTabAt(2).setIcon(R.drawable.ic_add);
                         break;
                     case 3:
-                        tabLayout.getTabAt(3).setIcon(R.drawable.ic_heart_fill);
+                        tabLayout.getTabAt(3).setIcon(R.drawable.ic_bell_fill);
                         break;
 
                 }
@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements Search.OnDataPass
                         tabLayout.getTabAt(2).setIcon(R.drawable.ic_add);
                         break;
                     case 3:
-                        tabLayout.getTabAt(3).setIcon(R.drawable.ic_heart);
+                        tabLayout.getTabAt(3).setIcon(R.drawable.ic_bell);
                         break;
                     /*case 4:
                         tabLayout.getTabAt(4).setIcon(R.drawable.ic_profile);
@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements Search.OnDataPass
                         tabLayout.getTabAt(2).setIcon(R.drawable.ic_add);
                         break;
                     case 3:
-                        tabLayout.getTabAt(3).setIcon(R.drawable.ic_heart_fill);
+                        tabLayout.getTabAt(3).setIcon(R.drawable.ic_bell_fill);
                         break;
                     /*case 4:
                         tabLayout.getTabAt(4).setIcon(android.R.drawable.ic_menu_help);

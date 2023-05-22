@@ -5,11 +5,21 @@
     android:layout_height="match_parent"
     tools:context=".fragments.Comment">
 
-    <androidx.recyclerview.widget.RecyclerView
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/commentRecyclerView"
-        android:layout_above="@+id/commentLayout"/>
+        android:layout_above="@+id/commentLayout"
+        android:padding="6dp"
+        android:background="@color/colorPrimaryDark">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/commentRecyclerView" />
+
+    </LinearLayout>
+
 
     <LinearLayout
         android:padding="6dp"
@@ -27,7 +37,9 @@
             android:id="@+id/commentET"
             android:background="@drawable/text_box"
             android:padding="12dp"
-            android:hint="Enter your comment here!"/>
+            android:hint="Enter your comment here!"
+            android:textColor="@color/black"
+            android:backgroundTint="#878787"/>
 
         <ImageButton
             android:layout_width="wrap_content"
@@ -36,7 +48,8 @@
             android:background="@drawable/ic_circle"
             android:elevation="1dp"
             android:layout_margin="6dp"
-            android:id="@+id/sendBtn"/>
+            android:id="@+id/sendBtn"
+            android:backgroundTint="@color/lightpink"/>
 
 
     </LinearLayout>

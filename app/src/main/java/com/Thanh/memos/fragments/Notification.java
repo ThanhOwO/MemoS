@@ -72,6 +72,7 @@ public class Notification extends Fragment {
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (error != null)
                     return;
+                assert value != null;
                 if (value.isEmpty())
                     return;
                 list.clear();

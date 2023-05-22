@@ -2,7 +2,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/post_bg"
+    android:layout_margin="8dp">
 
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -47,7 +49,7 @@
         android:layout_height="220dp"
         android:layout_below="@+id/descTv"
         android:id="@+id/imageView"
-        android:scaleType="centerCrop"/>
+        android:scaleType="centerCrop" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -56,23 +58,51 @@
         android:orientation="horizontal"
         android:layout_below="@+id/imageView">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/likecountTv"
+            android:text="100"
+            android:textStyle="bold"
+            android:layout_below="@+id/linearLayout"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="20dp"/>
+
         <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/likeBtn"
-            android:layout_margin="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="8dp"
             android:button="@drawable/heart_check" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/commentTV"
+            android:text="100"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"/>
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/commentBtn"
-            android:layout_margin="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:background="@drawable/ic_comment"/>
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/shareBtn"
-            android:layout_margin="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="8dp"
             android:background="@drawable/ic_share"/>
     </LinearLayout>
 
@@ -87,24 +117,9 @@
         android:paddingEnd="8dp"
         android:layout_marginBottom="10dp"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/likecountTv"
-        android:text="100 likes"
-        android:textStyle="bold"
-        android:layout_below="@+id/linearLayout"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/commentTV"
-        android:text="View all comment"
-        android:layout_below="@+id/likecountTv"
-        android:padding="8dp"
-        android:visibility="gone"/>
+
+
 
 
 

@@ -42,7 +42,8 @@
             android:background="@drawable/text_box"
             android:hint="Password"
             android:padding="12dp"
-            android:textColor="@color/black"/>
+            android:textColor="@color/black"
+            android:inputType="textPassword"/>
 
         <TextView
             android:id="@+id/forgotTV"

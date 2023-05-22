@@ -117,6 +117,7 @@ public class Home extends Fragment {
 
                 Activity activity = getActivity();
 
+                assert activity != null;
                 commentCount.observe((LifecycleOwner) activity, new Observer<Integer>() {
                     @Override
                     public void onChanged(Integer integer) {
@@ -125,7 +126,7 @@ public class Home extends Fragment {
                         }else {
                             textView.setVisibility(View.VISIBLE);
                         }
-                        textView.setText("See all " + commentCount.getValue() + " comments");
+                        textView.setText(commentCount.getValue() + " comments");
                     }
                 });
 

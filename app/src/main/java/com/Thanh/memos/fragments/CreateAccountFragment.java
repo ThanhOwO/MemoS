@@ -164,7 +164,7 @@ public class CreateAccountFragment extends Fragment {
 
         map.put("name", name);
         map.put("email", email);
-        map.put("profileImage", " ");
+        map.put("profileImage", "");
         map.put("uid", user.getUid());
         map.put("status","");
         map.put("search", name.toLowerCase());
