@@ -68,7 +68,8 @@
             android:background="@drawable/text_box"
             android:hint="Password"
             android:padding="12dp"
-            android:textColor="@color/black"/>
+            android:textColor="@color/black"
+            android:inputType="textPassword"/>
 
         <EditText
             android:id="@+id/confirmPassET"
@@ -78,7 +79,8 @@
             android:background="@drawable/text_box"
             android:hint="Confirm Password"
             android:padding="12dp"
-            android:textColor="@color/black"/>
+            android:textColor="@color/black"
+            android:inputType="textPassword"/>
     </LinearLayout>
 
     <ProgressBar

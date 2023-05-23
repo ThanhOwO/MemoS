@@ -49,6 +49,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -117,6 +119,7 @@ public class Home extends Fragment {
 
                 Activity activity = getActivity();
 
+                assert activity != null;
                 commentCount.observe((LifecycleOwner) activity, new Observer<Integer>() {
                     @Override
                     public void onChanged(Integer integer) {
@@ -125,7 +128,7 @@ public class Home extends Fragment {
                         }else {
                             textView.setVisibility(View.VISIBLE);
                         }
-                        textView.setText("See all " + commentCount.getValue() + " comments");
+                        textView.setText(commentCount.getValue() + " comments");
                     }
                 });
 
@@ -216,8 +219,6 @@ public class Home extends Fragment {
                                                     if (value == null)
                                                         return;
 
-                                                    list.clear();
-
                                                     for (QueryDocumentSnapshot snapshot : value){
                                                         //post data
                                                             if (!snapshot.exists())
@@ -251,7 +252,6 @@ public class Home extends Fragment {
                                                                                     }
                                                                                 }
                                                                             });
-
                                                         adapter.notifyDataSetChanged();
                                                     }
                                                 }

@@ -6,6 +6,7 @@
     tools:context=".fragments.CreateAccountFragment"
     android:background="@drawable/memosbg">
 
+
     <ImageView
         android:layout_width="215dp"
         android:layout_height="218dp"
@@ -41,7 +42,8 @@
             android:background="@drawable/text_box"
             android:hint="Password"
             android:padding="12dp"
-            android:textColor="@color/black"/>
+            android:textColor="@color/black"
+            android:inputType="textPassword"/>
 
         <TextView
             android:id="@+id/forgotTV"

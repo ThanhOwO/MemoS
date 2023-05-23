@@ -1,5 +1,6 @@
 package com.Thanh.memos.adapter;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -57,6 +58,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeHolder> {
         return new HomeHolder(view);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@androidx.annotation.NonNull HomeHolder holder, int position) {
 

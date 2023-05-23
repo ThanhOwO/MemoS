@@ -11,6 +11,7 @@ import static com.Thanh.memos.utils.Constrants.PREF_URL;
 
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
@@ -26,25 +27,29 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.Thanh.memos.FragmentReplacerActivity;
 import com.Thanh.memos.MainActivity;
 import com.Thanh.memos.R;
 import com.Thanh.memos.chat.ChatActivity;
-import com.Thanh.memos.chat.ChatUsersActivity;
 import com.Thanh.memos.model.PostImageModel;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -79,6 +84,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -96,7 +102,7 @@ public class Profile extends Fragment {
 
     private LinearLayout countLayout;
     private FirebaseUser user;
-    private ImageButton editprofileBtn;
+    private ImageButton editprofileBtn, optionBtn;
     int count;
 
     boolean isFollowed;
@@ -269,7 +275,64 @@ public class Profile extends Fragment {
                 queryChat();
             }
         });
+
+        optionBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PopupMenu popupMenu = new PopupMenu(getActivity(), v);
+                popupMenu.inflate(R.menu.menu_main);
+
+                // Set enter animation
+                try {
+                    Class<?> classPopupMenu = Class.forName(popupMenu.getClass().getName());
+                    Method setEnterAnimation = classPopupMenu.getDeclaredMethod("setEnterAnimation", int.class);
+                    setEnterAnimation.setAccessible(true);
+                    setEnterAnimation.invoke(popupMenu, R.style.PopupAnimation);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.action_setting:
+                                // Handle "Setting" button click
+                                return true;
+                            case R.id.action_logout:
+                                // Handle "Logout" button click
+                                FirebaseAuth.getInstance().signOut();
+
+                                Intent intent = new Intent(getActivity(), FragmentReplacerActivity.class);
+                                startActivity(intent);
+                                getActivity().finish();
+                                return true;
+                            default:
+                                return false;
+                        }
+                    }
+                });
+
+                // Set exit animation
+                popupMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
+                    @Override
+                    public void onDismiss(PopupMenu menu) {
+                        try {
+                            Class<?> classPopupMenu = Class.forName(menu.getClass().getName());
+                            Method setExitAnimation = classPopupMenu.getDeclaredMethod("setExitAnimation", int.class);
+                            setExitAnimation.setAccessible(true);
+                            setExitAnimation.invoke(menu, R.style.PopupAnimation);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
+                popupMenu.show();
+            }
+        });
     }
+
 
     void queryChat(){
 
@@ -383,6 +446,7 @@ public class Profile extends Fragment {
         countLayout = view.findViewById(R.id.countLayout);
         editprofileBtn = view.findViewById(R.id.edit_profileImage);
         startChatBtn = view.findViewById(R.id.startChatBtn);
+        optionBtn = view.findViewById(R.id.optionBtn);
 
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
