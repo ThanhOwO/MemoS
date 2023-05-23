@@ -155,11 +155,9 @@ public class Add extends Fragment {
         map.put("description", description);
         map.put("imageUrl", imageURL);
         map.put("timestamp", FieldValue.serverTimestamp());
-
         map.put("name", user.getDisplayName());
         map.put("profileImage", String.valueOf(user.getPhotoUrl()));
         map.put("likes", list);
-        map.put("comments", list);
         map.put("uid", user.getUid());
 
         reference.document(id).set(map)

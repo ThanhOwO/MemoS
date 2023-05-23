@@ -12,22 +12,33 @@
         app:civ_border_width="2dp"
         android:id="@+id/profileImage"/>
 
-    <TextView
-        android:padding="6dp"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/profileImage"
-        android:layout_toEndOf="@+id/profileImage"
-        android:id="@+id/nameTV"
-        android:textColor="@color/black"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/profileImage"
-        android:layout_toEndOf="@+id/profileImage"
-        android:layout_below="@+id/nameTV"
-        android:id="@+id/commentTV"
-        android:padding="6dp"
-        android:textColor="@color/black"/>
+        android:orientation="vertical"
+        android:layout_toRightOf="@id/profileImage"
+        android:layout_marginLeft="10dp"
+        android:background="@drawable/cmt_bg">
+
+        <TextView
+            android:padding="6dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/profileImage"
+            android:layout_toEndOf="@+id/profileImage"
+            android:id="@+id/nameTV"
+            android:textColor="@color/black"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/profileImage"
+            android:layout_toEndOf="@+id/profileImage"
+            android:layout_below="@+id/nameTV"
+            android:id="@+id/commentTV"
+            android:padding="6dp"
+            android:textColor="@color/black"/>
+
+    </LinearLayout>
+
 
 </RelativeLayout>
