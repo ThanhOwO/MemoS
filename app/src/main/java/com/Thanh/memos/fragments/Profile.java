@@ -112,6 +112,8 @@ public class Profile extends Fragment {
     String userUID;
     FirestoreRecyclerAdapter<PostImageModel, PostImageHolder> adapter;
 
+    LinearLayout newuserNotification;
+
     public Profile() {
         // Required empty public constructor
     }
@@ -447,6 +449,7 @@ public class Profile extends Fragment {
         editprofileBtn = view.findViewById(R.id.edit_profileImage);
         startChatBtn = view.findViewById(R.id.startChatBtn);
         optionBtn = view.findViewById(R.id.optionBtn);
+        newuserNotification = view.findViewById(R.id.notification);
 
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -591,8 +594,13 @@ public class Profile extends Fragment {
 
              @Override
              public int getItemCount() {
-
-                 return super.getItemCount();
+                 int count = super.getItemCount();
+                 if (count == 0) {
+                     newuserNotification.setVisibility(View.VISIBLE);
+                 } else {
+                     newuserNotification.setVisibility(View.GONE);
+                 }
+                 return count;
              }
          };
 

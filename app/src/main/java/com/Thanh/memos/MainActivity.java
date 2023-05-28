@@ -20,6 +20,7 @@ import com.Thanh.memos.adapter.ViewPagerAdapter;
 import com.Thanh.memos.fragments.Search;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.File;
@@ -191,12 +192,19 @@ public class MainActivity extends AppCompatActivity implements Search.OnDataPass
     }
 
     void updateStatus(boolean status){
-        Map<String, Object> map = new HashMap<>();
-        map.put("online", status);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            String userId = user.getUid();
 
-        FirebaseFirestore.getInstance()
-                .collection("Users")
-                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .update(map);
+            Map<String, Object> map = new HashMap<>();
+            map.put("online", status);
+
+            FirebaseFirestore.getInstance()
+                    .collection("Users")
+                    .document(userId)
+                    .update(map);
+        } else {
+            // Handle the situation when the FirebaseUser object is null
+        }
     }
 }

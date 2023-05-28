@@ -7,6 +7,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.LinearLayout;
 
 import com.Thanh.memos.R;
 import com.Thanh.memos.adapter.ChatUserAdapter;
@@ -28,6 +30,8 @@ public class ChatUsersActivity extends AppCompatActivity {
     ChatUserAdapter adapter;
     List<ChatUserModel> list;
     FirebaseUser user;
+
+    LinearLayout waitingmessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +56,7 @@ public class ChatUsersActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
+        waitingmessage = findViewById(R.id.gif);
     }
 
     void fetchUserData(){
@@ -63,8 +68,11 @@ public class ChatUsersActivity extends AppCompatActivity {
                         if(error != null)
                             return;
 
-                        if (value.isEmpty())
-                            return;
+                        if (value.isEmpty()){
+                            waitingmessage.setVisibility(View.VISIBLE);
+                        }else{
+                            waitingmessage.setVisibility(View.GONE);
+                        }
 
                         list.clear();
                         for(QueryDocumentSnapshot snapshot : value){

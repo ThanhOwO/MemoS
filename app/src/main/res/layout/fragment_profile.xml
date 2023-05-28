@@ -67,7 +67,7 @@
                 android:layout_marginTop="14dp"
                 android:layout_marginEnd="14dp"
                 android:layout_marginBottom="14dp"
-                android:src="@drawable/ic_person"
+                android:src="@drawable/profile"
                 app:civ_border_color="@color/colorAccent"
                 app:civ_border_width="4dp" />
 
@@ -260,5 +260,29 @@
         android:layout_height="match_parent"
         android:id="@+id/recyclerView"
         android:layout_below="@+id/view" />
+
+    <LinearLayout
+        android:id="@+id/notification"
+        android:layout_below="@+id/view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="160dp">
+
+        <TextView
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ops! You don't have any memory.\n Start sharing now!"
+            android:textStyle="bold"
+            android:textSize="15dp"/>
+
+        <pl.droidsonroids.gif.GifImageView
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:background="@drawable/arrowdown"
+            android:layout_gravity="center"/>
+    </LinearLayout>
 
 </RelativeLayout>

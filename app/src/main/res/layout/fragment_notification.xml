@@ -5,9 +5,22 @@
     android:layout_height="match_parent"
     tools:context=".fragments.Notification">
 
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Notifications"
+        android:textSize="30dp"
+        android:layout_margin="10dp"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:gravity="center"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/recyclerView"/>
+        android:id="@+id/recyclerView"
+        android:layout_margin="20dp"
+        android:layout_below="@id/title"/>
 
 </RelativeLayout>
