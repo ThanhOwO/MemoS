@@ -133,9 +133,6 @@ public class Home extends Fragment {
                         }
                     }
                 });
-
-
-
             }
         });
 
@@ -279,7 +276,6 @@ public class Home extends Fragment {
                                 }
                             }
                         });
-
                 //fetch stories
                 loadStories(uidList);
             }
@@ -287,29 +283,22 @@ public class Home extends Fragment {
     }
 
     //get stories from firebase database
-    void loadStories(List<String> followingList){
+    void loadStories(List<String> followingList) {
+        storiesModelList.clear();
         Query query = FirebaseFirestore.getInstance().collection("Stories");
-        query.whereIn("uid", followingList).addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                if (error != null){
-                    Log.d("Error", error.getMessage());
-                }
-
-                if (value == null)
-                    return;
-
-                list.clear();
-                for (QueryDocumentSnapshot snapshot : value){
-
-                    if(!value.isEmpty()){
-                        StoriesModel model = snapshot.toObject(StoriesModel.class);
-                        storiesModelList.add(model);
+        query.whereIn("uid", followingList).get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (QueryDocumentSnapshot snapshot : queryDocumentSnapshots) {
+                        if (!queryDocumentSnapshots.isEmpty()) {
+                            StoriesModel model = snapshot.toObject(StoriesModel.class);
+                            storiesModelList.add(model);
+                        }
                     }
-
-                }
-                storiesAdapter.notifyDataSetChanged();
-            }
-        });
+                    storiesAdapter.notifyDataSetChanged();
+                })
+                .addOnFailureListener(e -> {
+                    Log.d("Error: ", e.getMessage());
+                });
     }
+
 }

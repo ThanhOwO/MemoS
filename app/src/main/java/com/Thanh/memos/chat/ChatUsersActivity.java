@@ -8,7 +8,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.SearchView;
 
 import com.Thanh.memos.R;
 import com.Thanh.memos.adapter.ChatUserAdapter;
@@ -30,7 +32,6 @@ public class ChatUsersActivity extends AppCompatActivity {
     ChatUserAdapter adapter;
     List<ChatUserModel> list;
     FirebaseUser user;
-
     LinearLayout waitingmessage;
 
     @Override

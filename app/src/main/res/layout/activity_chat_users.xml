@@ -20,17 +20,23 @@
         android:layout_marginBottom="8dp"
         android:id="@+id/title"/>
 
-    <EditText
+    <LinearLayout
+        android:id="@+id/searchET"
         android:layout_below="@id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:padding="12dp"
-        android:id="@+id/searchET"
-        android:background="@drawable/text_box_edit"
-        android:drawableStart="@drawable/ic_search"
-        android:drawablePadding="8dp"
-        android:hint="Search..." />
+        android:background="@drawable/cornerbg"
+        android:layout_margin="10dp">
+
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/searchview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:queryHint="Search..."
+            android:background="@color/float_transparent"/>
+
+    </LinearLayout>
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_marginTop="8dp"

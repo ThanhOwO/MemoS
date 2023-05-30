@@ -95,7 +95,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class Profile extends Fragment {
 
-    private TextView nameTv, toolbarNameTv, statusTv, followingCountTv, followersCountTv, postCountTv;
+    private TextView nameTv, toolbarNameTv, statusTv, followingCountTv, followersCountTv, postCountTv, emptyGallery;
     private CircleImageView profileImage;
     private Button followBtn, startChatBtn;
     private RecyclerView recyclerView;
@@ -153,7 +153,6 @@ public class Profile extends Fragment {
         }else {
             editprofileBtn.setVisibility(View.GONE);
             followBtn.setVisibility(View.VISIBLE);
-            //countLayout.setVisibility(View.GONE);
         }
 
         //get user information from firebase storage
@@ -168,6 +167,7 @@ public class Profile extends Fragment {
         recyclerView.setItemAnimator(null);
 
         clickListener();
+
     }
 
     private void loadData(){
@@ -450,6 +450,7 @@ public class Profile extends Fragment {
         startChatBtn = view.findViewById(R.id.startChatBtn);
         optionBtn = view.findViewById(R.id.optionBtn);
         newuserNotification = view.findViewById(R.id.notification);
+        emptyGallery = view.findViewById(R.id.emptyGallery);
 
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -595,10 +596,14 @@ public class Profile extends Fragment {
              @Override
              public int getItemCount() {
                  int count = super.getItemCount();
-                 if (count == 0) {
+                 if (count == 0 && isMyProfile) {
                      newuserNotification.setVisibility(View.VISIBLE);
+                 } else if (count == 0 && !isMyProfile) {
+                     newuserNotification.setVisibility(View.GONE);
+                     emptyGallery.setVisibility(View.VISIBLE);
                  } else {
                      newuserNotification.setVisibility(View.GONE);
+                     emptyGallery.setVisibility(View.GONE);
                  }
                  return count;
              }
