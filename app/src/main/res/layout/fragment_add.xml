@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp"
+    tools:targetApi="m"
+    tools:context=".fragments.Add"
+    tools:ignore="UnusedAttribute">
+
+    <RelativeLayout
+        android:gravity="center_vertical"
+        android:id="@+id/layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageButton
+            android:layout_margin="4dp"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:padding="4dp"
+            android:id="@+id/backBtn"
+            android:elevation="3dp"
+            android:background="@drawable/ic_circle"
+            android:src="@drawable/ic_back"
+            android:foreground="?attr/selectableItemBackground" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Create Your Post!"
+            android:layout_centerInParent="true"
+            android:textSize="20dp"
+            android:textColor="@color/colorAccent"
+            android:textStyle="bold"/>
+
+        <ImageButton
+            android:layout_margin="4dp"
+            android:visibility="gone"
+            android:elevation="3dp"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:padding="4dp"
+            android:src="@drawable/ic_next"
+            android:background="@drawable/ic_circle"
+            android:layout_alignParentEnd="true"
+            android:id="@+id/nextBtn"/>
+
+    </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:id="@+id/piclayout"
+            android:layout_below="@id/layout"
+            android:background="@drawable/cornerbg"
+            android:layout_marginTop="20dp">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/descriptionET"
+            android:background="@android:color/transparent"
+            android:hint="Add Something About This Post..."
+            android:minLines="12"
+            android:layout_margin="10dp"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_margin="6dp"
+            android:background="#000"
+            android:layout_below="@+id/descriptionET"
+            android:id="@+id/view"/>
+
+        </RelativeLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:id="@+id/imageView"
+        android:visibility="gone"
+        android:contentDescription="@null"
+        android:layout_below="@+id/piclayout"
+        android:background="@color/colorAccent"
+        android:scaleType="centerCrop"
+        android:layout_marginTop="10dp"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/recyclerView"
+            android:layout_below="@id/imageView"
+            android:layout_marginTop="10dp"/>
+
+
+
+
+</RelativeLayout>

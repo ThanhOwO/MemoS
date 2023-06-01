@@ -1,6 +1,7 @@
 package com.Thanh.memos.fragments;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -24,9 +25,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class CreateAccountFragment extends Fragment {
@@ -67,13 +71,15 @@ public class CreateAccountFragment extends Fragment {
         confirmPasswordEt = view.findViewById(R.id.confirmPassET);
         loginTv = view.findViewById(R.id.loginTV);
         signUpBtn = view.findViewById(R.id.signUpBtn);
-        progressBar = view.findViewById(R.id.progressbar);
+        progressBar = view.findViewById(R.id.progressBar);
 
         auth = FirebaseAuth.getInstance();
     }
 
-    //Login and signup conditions
+    //signup conditions
     private  void clickListener(){
+
+        //Navigate to login page
         loginTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -122,6 +128,14 @@ public class CreateAccountFragment extends Fragment {
                         if(task.isSuccessful()){
 
                             FirebaseUser user = auth.getCurrentUser();
+
+                            String image = "https://cdn-icons-png.flaticon.com/512/2815/2815428.png";
+
+                            UserProfileChangeRequest.Builder request = new UserProfileChangeRequest.Builder();
+                            request.setDisplayName(name);
+                            request.setPhotoUri(Uri.parse(image));
+                            user.updateProfile(request.build());
+
                             user.sendEmailVerification()
                                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                 @Override
@@ -144,12 +158,19 @@ public class CreateAccountFragment extends Fragment {
 
     //Put user into cloud database
     private void uploadUser(FirebaseUser user, String name, String email){
+        List<String> list = new ArrayList<>();
+        List<String> list1 = new ArrayList<>();
         Map<String, Object> map = new HashMap<>();
 
         map.put("name", name);
         map.put("email", email);
-        map.put("profileImage", " ");
+        map.put("profileImage", "https://cdn.glitch.global/3e30c75a-6d2a-4b95-8549-1941573d75cf/profile.png?v=1684763719916");
         map.put("uid", user.getUid());
+        map.put("status","");
+        map.put("search", name.toLowerCase());
+        map.put("followers", list);
+        map.put("following", list1);
+
 
         FirebaseFirestore.getInstance().collection("Users").document(user.getUid())
                 .set(map)

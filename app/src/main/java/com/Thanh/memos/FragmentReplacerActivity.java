@@ -8,6 +8,7 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.widget.FrameLayout;
 
+import com.Thanh.memos.fragments.Comment;
 import com.Thanh.memos.fragments.CreateAccountFragment;
 import com.Thanh.memos.fragments.LoginFragment;
 
@@ -22,10 +23,14 @@ public class FragmentReplacerActivity extends AppCompatActivity {
 
         frameLayout = findViewById(R.id.frameLayout);
 
-        setFragment(new LoginFragment());
+        boolean isComment = getIntent().getBooleanExtra("isComment", false);
+        if(isComment)
+            setFragment(new Comment());
+        else
+            setFragment(new LoginFragment());
     }
 
-    //animation for changing between login and signup
+    //animation for changing page
     public void setFragment(Fragment fragment){
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
@@ -33,6 +38,18 @@ public class FragmentReplacerActivity extends AppCompatActivity {
         if(fragment instanceof CreateAccountFragment){
             fragmentTransaction.addToBackStack(null);
         }
+
+        if (fragment instanceof Comment){
+            String id = getIntent().getStringExtra("id");
+            String uid = getIntent().getStringExtra("uid");
+
+            Bundle bundle = new Bundle();
+            bundle.putString("id", id);
+            bundle.putString("uid", uid);
+            fragment.setArguments(bundle);
+
+        }
+
         fragmentTransaction.replace(frameLayout.getId(), fragment);
         fragmentTransaction.commit();
     }
