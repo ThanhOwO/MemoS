@@ -1,6 +1,8 @@
 package com.Thanh.memos.adapter;
 
 import static com.Thanh.memos.ViewStoryActivity.FILE_TYPE;
+import static com.Thanh.memos.ViewStoryActivity.PROFILE_IMG;
+import static com.Thanh.memos.ViewStoryActivity.USER_NAME;
 import static com.Thanh.memos.ViewStoryActivity.VIDEO_URL_KEY;
 
 import android.Manifest;
@@ -105,6 +107,8 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.StoriesH
                         Intent intent = new Intent(activity, ViewStoryActivity.class);
                         intent.putExtra(VIDEO_URL_KEY, list.get(position).getUrl());
                         intent.putExtra(FILE_TYPE, list.get(position).getType());
+                        intent.putExtra(USER_NAME, list.get(position).getName());
+                        intent.putExtra(PROFILE_IMG, list.get(position).getProfileImage());
                         activity.startActivity(intent);
                     }
 

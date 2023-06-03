@@ -160,7 +160,7 @@ public class Home extends Fragment {
         storiesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
 
         storiesModelList = new ArrayList<>();
-        storiesModelList.add(new StoriesModel("", "", "", "",""));
+        storiesModelList.add(new StoriesModel("", "", "", "","",""));
         storiesAdapter = new StoriesAdapter(storiesModelList, getActivity());
         storiesRecyclerView.setAdapter(storiesAdapter);
 

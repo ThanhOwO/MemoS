@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
@@ -25,12 +26,18 @@ import com.google.firebase.storage.StorageReference;
 import java.io.File;
 import java.io.IOException;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class ViewStoryActivity extends AppCompatActivity {
 
     PlayerView exoPlayer;
     public static final String VIDEO_URL_KEY = "videoURL";
     public static final String FILE_TYPE = "file type";
+    public static final String USER_NAME = "user name";
+    public static final String PROFILE_IMG = "profile image";
     ImageView imageView;
+    CircleImageView storyProfileImage;
+    TextView storyUserName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,9 +47,12 @@ public class ViewStoryActivity extends AppCompatActivity {
 
         String url = getIntent().getStringExtra(VIDEO_URL_KEY);
         String type = getIntent().getStringExtra(FILE_TYPE);
+        String name = getIntent().getStringExtra(USER_NAME);
+        String profileImg = getIntent().getStringExtra(PROFILE_IMG);
         if(url == null || url.isEmpty()){
             finish();
         }
+
 
         if(type.contains("image")){
             //image
@@ -53,7 +63,19 @@ public class ViewStoryActivity extends AppCompatActivity {
                     .load(url)
                     .into(imageView);
 
+            Glide.with(getApplicationContext())
+                    .load(profileImg)
+                    .into(storyProfileImage);
+
+            storyUserName.setText(name);
+
         }else {
+            storyUserName.setText(name);
+
+            Glide.with(getApplicationContext())
+                    .load(profileImg)
+                    .into(storyProfileImage);
+
             //video
             exoPlayer.setVisibility(View.VISIBLE);
             imageView.setVisibility(View.GONE);
@@ -71,5 +93,7 @@ public class ViewStoryActivity extends AppCompatActivity {
     void init(){
         exoPlayer = findViewById(R.id.videoView);
         imageView = findViewById(R.id.imageView);
+        storyProfileImage = findViewById(R.id.storyprofileImage);
+        storyUserName = findViewById(R.id.storynameTV);
     }
 }
