@@ -25,7 +25,9 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ChatUsersActivity extends AppCompatActivity {
 
@@ -104,5 +106,34 @@ public class ChatUsersActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateStatus(true);
+    }
+
+    @Override
+    protected void onPause() {
+        updateStatus(false);
+        super.onPause();
+    }
+
+    void updateStatus(boolean status){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            String userId = user.getUid();
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("online", status);
+
+            FirebaseFirestore.getInstance()
+                    .collection("Users")
+                    .document(userId)
+                    .update(map);
+        } else {
+            // Handle the situation when the FirebaseUser object is null
+        }
     }
 }

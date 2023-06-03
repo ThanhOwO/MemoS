@@ -96,6 +96,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -306,6 +307,7 @@ public class Profile extends Fragment {
                 }
 
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @SuppressLint("NonConstantResourceId")
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
@@ -313,12 +315,14 @@ public class Profile extends Fragment {
                                 // Handle "Setting" button click
                                 return true;
                             case R.id.action_logout:
+
+                                userRef.update("online", false);
                                 // Handle "Logout" button click
                                 FirebaseAuth.getInstance().signOut();
 
                                 Intent intent = new Intent(getActivity(), FragmentReplacerActivity.class);
                                 startActivity(intent);
-                                getActivity().finish();
+                                requireActivity().finish();
                                 return true;
                             default:
                                 return false;

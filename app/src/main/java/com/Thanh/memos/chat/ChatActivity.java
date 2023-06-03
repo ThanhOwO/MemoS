@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -132,6 +133,9 @@ public class ChatActivity extends AppCompatActivity {
                     boolean isOnline = value.getBoolean("online");
                     status.setText(isOnline ? "Online" : "Offline");
 
+                    int statusColor = isOnline ? Color.GREEN : Color.GRAY;
+                    status.setTextColor(statusColor);
+
                     Glide.with(getApplicationContext()).load(value.getString("profileImage")).into(imageView);
                     name.setText(value.getString("name"));
                 });
@@ -164,5 +168,34 @@ public class ChatActivity extends AppCompatActivity {
                 adapter.notifyDataSetChanged();
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateStatus(true);
+    }
+
+    @Override
+    protected void onPause() {
+        updateStatus(false);
+        super.onPause();
+    }
+
+    void updateStatus(boolean status){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            String userId = user.getUid();
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("online", status);
+
+            FirebaseFirestore.getInstance()
+                    .collection("Users")
+                    .document(userId)
+                    .update(map);
+        } else {
+            // Handle the situation when the FirebaseUser object is null
+        }
     }
 }

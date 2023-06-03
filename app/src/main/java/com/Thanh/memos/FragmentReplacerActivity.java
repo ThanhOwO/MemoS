@@ -11,6 +11,12 @@ import android.widget.FrameLayout;
 import com.Thanh.memos.fragments.Comment;
 import com.Thanh.memos.fragments.CreateAccountFragment;
 import com.Thanh.memos.fragments.LoginFragment;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class FragmentReplacerActivity extends AppCompatActivity {
 
@@ -52,5 +58,34 @@ public class FragmentReplacerActivity extends AppCompatActivity {
 
         fragmentTransaction.replace(frameLayout.getId(), fragment);
         fragmentTransaction.commit();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateStatus(true);
+    }
+
+    @Override
+    protected void onPause() {
+        updateStatus(false);
+        super.onPause();
+    }
+
+    void updateStatus(boolean status){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            String userId = user.getUid();
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("online", status);
+
+            FirebaseFirestore.getInstance()
+                    .collection("Users")
+                    .document(userId)
+                    .update(map);
+        } else {
+            // Handle the situation when the FirebaseUser object is null
+        }
     }
 }
