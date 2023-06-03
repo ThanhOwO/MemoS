@@ -164,7 +164,7 @@ public class CreateAccountFragment extends Fragment {
 
         map.put("name", name);
         map.put("email", email);
-        map.put("profileImage", "");
+        map.put("profileImage", "https://cdn.glitch.global/3e30c75a-6d2a-4b95-8549-1941573d75cf/profile.png?v=1684763719916");
         map.put("uid", user.getUid());
         map.put("status","");
         map.put("search", name.toLowerCase());

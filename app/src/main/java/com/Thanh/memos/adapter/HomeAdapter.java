@@ -89,7 +89,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeHolder> {
 
         Glide.with(context.getApplicationContext())
                 .load(list.get(position).getProfileImage())
-                .placeholder(R.drawable.ic_person)
+                .placeholder(R.drawable.profile)
                 .timeout(6500)
                 .into(holder.profileImage);
         Glide.with(context.getApplicationContext())

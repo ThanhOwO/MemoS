@@ -1,6 +1,7 @@
 package com.Thanh.memos.fragments;
 
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -65,6 +66,7 @@ public class Home extends Fragment {
     StoriesAdapter storiesAdapter;
     List<StoriesModel> storiesModelList;
     ImageButton sendBtn;
+    LinearLayout introduce;
 
 
     public Home() {
@@ -121,19 +123,16 @@ public class Home extends Fragment {
 
                 assert activity != null;
                 commentCount.observe((LifecycleOwner) activity, new Observer<Integer>() {
+                    @SuppressLint("SetTextI18n")
                     @Override
                     public void onChanged(Integer integer) {
                         if(commentCount.getValue() == 0){
-                            textView.setVisibility(View.GONE);
+                            textView.setVisibility(View.VISIBLE);
                         }else {
                             textView.setVisibility(View.VISIBLE);
                         }
-                        textView.setText(commentCount.getValue() + " comments");
                     }
                 });
-
-
-
             }
         });
 
@@ -165,6 +164,8 @@ public class Home extends Fragment {
         storiesAdapter = new StoriesAdapter(storiesModelList, getActivity());
         storiesRecyclerView.setAdapter(storiesAdapter);
 
+        introduce = view.findViewById(R.id.introduce);
+
         FirebaseAuth auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
     }
@@ -175,7 +176,7 @@ public class Home extends Fragment {
         final DocumentReference reference = FirebaseFirestore.getInstance().collection("Users")
                 .document(user.getUid());
 
-        CollectionReference collectionReference = FirebaseFirestore.getInstance().collection("Users");
+        final CollectionReference collectionReference = FirebaseFirestore.getInstance().collection("Users");
         reference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -197,69 +198,84 @@ public class Home extends Fragment {
                 collectionReference.whereIn("uid", uidList)
                         .addSnapshotListener(new EventListener<QuerySnapshot>() {
                             @Override
-                            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                            public void onEvent(@Nullable QuerySnapshot value1, @Nullable FirebaseFirestoreException error1) {
 
-                                if (error != null){
-                                    Log.d("Error", error.getMessage());
+                                if (error1 != null){
+                                    Log.d("Error", error1.getMessage());
                                 }
 
-                                if (value == null)
+                                if (value1 == null)
                                     return;
 
-                                for (QueryDocumentSnapshot snapshot : value){
+
+                                for (QueryDocumentSnapshot snapshot : value1){
 
                                     snapshot.getReference().collection("Post Images")
                                             .addSnapshotListener(new EventListener<QuerySnapshot>() {
                                                 @Override
-                                                public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                                                    if (error != null){
-                                                        Log.d("Error", error.getMessage());
+                                                public void onEvent(@Nullable QuerySnapshot value11, @Nullable FirebaseFirestoreException error11) {
+                                                    if (error11 != null){
+                                                        Log.d("Error", error11.getMessage());
                                                     }
 
-                                                    if (value == null)
+                                                    if (value11 == null)
                                                         return;
 
-                                                    for (QueryDocumentSnapshot snapshot : value){
+                                                    for (QueryDocumentSnapshot snapshot1 : value11){
                                                         //post data
-                                                            if (!snapshot.exists())
+                                                            if (!snapshot1.exists())
                                                                 return;
 
-                                                            HomeModel model = snapshot.toObject(HomeModel.class);
-                                                            list.add(new HomeModel(
-                                                                    model.getName(),
-                                                                    model.getProfileImage(),
-                                                                    model.getImageUrl(),
-                                                                    model.getUid(),
-                                                                    model.getDescription(),
-                                                                    model.getId(),
-                                                                    model.getTimestamp(),
-                                                                    model.getLikes()
-                                                            ));
+                                                            HomeModel model = snapshot1.toObject(HomeModel.class);
+                                                            String postId = model.getId();
+
+                                                            boolean postExists = false;
+                                                            for (HomeModel existingPost : list) {
+                                                                if (existingPost.getId().equals(postId)) {
+                                                                    postExists = true;
+                                                                    break;
+                                                                }
+                                                            }
+
+                                                            if (!postExists) {
+                                                                list.add(new HomeModel(
+                                                                        model.getName(),
+                                                                        model.getProfileImage(),
+                                                                        model.getImageUrl(),
+                                                                        model.getUid(),
+                                                                        model.getDescription(),
+                                                                        model.getId(),
+                                                                        model.getTimestamp(),
+                                                                        model.getLikes()
+                                                                ));
+                                                            }
 
                                                             //get comment from database firebase
-                                                            snapshot.getReference().collection("Comments").get()
-                                                                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                                                @Override
-                                                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                                                    if (task.isSuccessful()){
+                                                            snapshot1.getReference().collection("Comments").get()
+                                                                .addOnCompleteListener(task -> {
+                                                                    if (task.isSuccessful()) {
+                                                                        Map<String, Object> map = new HashMap<>();
+                                                                        for (QueryDocumentSnapshot commentSnapshot : task.getResult()) {
+                                                                            Map<String, Object> commentData = commentSnapshot.getData();
+                                                                            map.putAll(commentData);
+                                                                        }
+                                                                        commentCount.setValue(map.size());
 
-                                                                                        int count = 0;
-                                                                                        for (QueryDocumentSnapshot documentSnapshot : task.getResult()){
-                                                                                            count++;
-                                                                                        }
-                                                                                        commentCount.setValue(count);
-                                                                                        //comment count
-                                                                                    }
-                                                                                }
-                                                                            });
-                                                        adapter.notifyDataSetChanged();
+                                                                    }
+
+                                                                });
                                                     }
+                                                    if (list.isEmpty()) {
+                                                        introduce.setVisibility(View.VISIBLE);
+                                                    } else {
+                                                        introduce.setVisibility(View.GONE);
+                                                    }
+                                                    adapter.notifyDataSetChanged();
                                                 }
                                             });
                                 }
                             }
                         });
-
                 //fetch stories
                 loadStories(uidList);
             }
@@ -267,29 +283,22 @@ public class Home extends Fragment {
     }
 
     //get stories from firebase database
-    void loadStories(List<String> followingList){
+    void loadStories(List<String> followingList) {
+        storiesModelList.clear();
         Query query = FirebaseFirestore.getInstance().collection("Stories");
-        query.whereIn("uid", followingList).addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                if (error != null){
-                    Log.d("Error", error.getMessage());
-                }
-
-                if (value == null)
-                    return;
-
-                list.clear();
-                for (QueryDocumentSnapshot snapshot : value){
-
-                    if(!value.isEmpty()){
-                        StoriesModel model = snapshot.toObject(StoriesModel.class);
-                        storiesModelList.add(model);
+        query.whereIn("uid", followingList).get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (QueryDocumentSnapshot snapshot : queryDocumentSnapshots) {
+                        if (!queryDocumentSnapshots.isEmpty()) {
+                            StoriesModel model = snapshot.toObject(StoriesModel.class);
+                            storiesModelList.add(model);
+                        }
                     }
-
-                }
-                storiesAdapter.notifyDataSetChanged();
-            }
-        });
+                    storiesAdapter.notifyDataSetChanged();
+                })
+                .addOnFailureListener(e -> {
+                    Log.d("Error: ", e.getMessage());
+                });
     }
+
 }

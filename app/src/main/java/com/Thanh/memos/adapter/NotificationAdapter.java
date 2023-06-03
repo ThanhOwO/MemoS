@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.Thanh.memos.R;
 import com.Thanh.memos.fragments.Notification;
 import com.Thanh.memos.model.NotificationModel;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Date;
 import java.util.List;
@@ -23,6 +24,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
     Context context;
     List<NotificationModel> list;
+
 
     public NotificationAdapter(Context context, List<NotificationModel> list) {
         this.context = context;
@@ -40,7 +42,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     @Override
     public void onBindViewHolder(@NonNull NotificationHolder holder, int position) {
         holder.notification.setText(list.get(position).getNotification());
-        holder.notification.setText(calculateTime(list.get(position).getTime()));
+        holder.time.setText(calculateTime(list.get(position).getTime()));
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)

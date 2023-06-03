@@ -15,8 +15,8 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:src="@drawable/ic_person"
-        app:civ_border_color="@color/black"
+        android:src="@drawable/profile"
+        app:civ_border_color="@color/colorAccent"
         app:civ_border_width="3dp" />
 
     <LinearLayout
@@ -84,7 +84,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/commentTV"
-            android:text="100"
+            android:text="Comments"
+            android:textStyle="bold"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
             android:layout_marginBottom="8dp"
@@ -96,12 +97,22 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:background="@drawable/ic_comment"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Share"
+            android:layout_marginStart="30dp"
+            android:textStyle="bold"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"/>
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/shareBtn"
             android:layout_marginTop="8dp"
-            android:layout_marginStart="40dp"
+
             android:layout_marginEnd="20dp"
             android:layout_marginBottom="8dp"
             android:background="@drawable/ic_share"/>

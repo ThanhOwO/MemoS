@@ -60,4 +60,34 @@
         android:layout_marginTop="10dp"
         android:background="#FCECFF"/>
 
+    <LinearLayout
+        android:id="@+id/introduce"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerInParent="true">
+
+        <pl.droidsonroids.gif.GifImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/gif1" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start your social media experience by following amazing individuals Now!!!"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:textSize="18dp"/>
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="@drawable/right_arrow"
+            android:layout_gravity="center"/>
+
+    </LinearLayout>
+
+
+
 </RelativeLayout>
