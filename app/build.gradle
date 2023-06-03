@@ -32,44 +32,20 @@ android {
 dependencies {
 
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.9.0'
+    implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'com.google.android.material:material:1.9.0'
+    implementation 'com.google.android.material:material:1.8.0'
 
-    //Glide
-    implementation 'com.github.bumptech.glide:glide:4.15.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.15.0'
-
-    //CircleImageView
-    implementation 'de.hdodenhof:circleimageview:3.1.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview-selection:1.1.0'
 
     //Firebase
-    implementation 'com.google.firebase:firebase-auth:22.0.0'
-    implementation 'com.google.firebase:firebase-firestore:24.6.1'
-    implementation 'com.google.firebase:firebase-storage:20.2.0'
-    implementation 'com.google.android.gms:play-services-auth:20.5.0'
+    implementation 'com.google.firebase:firebase-auth:21.1.0'
+    implementation 'com.google.firebase:firebase-firestore:24.4.4'
+    implementation 'com.google.firebase:firebase-storage:20.1.0'
+    implementation 'com.google.android.gms:play-services-auth:20.4.1'
     implementation platform('com.google.firebase:firebase-bom:31.2.3')
 
-    //FirebaseUI for Cloud Firestore
-    implementation 'com.firebaseui:firebase-ui-firestore:8.0.2'
-
-    //Image cropper
-    api 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
-
-    //Allow permission at runtime for android
-    implementation 'com.karumi:dexter:6.2.3'
-
-    //Stylish Alert Dialogs for Android
-    implementation 'com.github.MarsadMaqsood:StylishDialogs:1.0.0'
-
-    //Video trimmer
-    implementation 'com.github.a914-gowtham:android-video-trimmer:1.7.4'
-
-    //ExoPlayer
-    implementation 'com.google.android.exoplayer:exoplayer:2.18.7'
-
-    //Gif
-    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.25'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
