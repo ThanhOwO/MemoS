@@ -12,12 +12,15 @@ import static com.Thanh.memos.utils.Constrants.PREF_URL;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -34,11 +37,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -102,7 +109,7 @@ public class Profile extends Fragment {
 
     private LinearLayout countLayout;
     private FirebaseUser user;
-    private ImageButton editprofileBtn, optionBtn;
+    private ImageButton editprofileBtn, optionBtn, editName, editStatus;
     int count;
 
     boolean isFollowed;
@@ -150,9 +157,13 @@ public class Profile extends Fragment {
             followBtn.setVisibility(View.GONE);
             startChatBtn.setVisibility(View.GONE);
             countLayout.setVisibility(View.VISIBLE);
+            editName.setVisibility(View.VISIBLE);
+            editStatus.setVisibility(View.VISIBLE);
         }else {
             editprofileBtn.setVisibility(View.GONE);
             followBtn.setVisibility(View.VISIBLE);
+            editName.setVisibility(View.GONE);
+            editStatus.setVisibility(View.GONE);
         }
 
         //get user information from firebase storage
@@ -333,8 +344,164 @@ public class Profile extends Fragment {
                 popupMenu.show();
             }
         });
+
+        editName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openEditNameDialog(Gravity.CENTER);
+            }
+        });
+
+        editStatus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openEditStatusDialog(Gravity.CENTER);
+            }
+        });
     }
 
+    private void openEditNameDialog(int gravity){
+        final Dialog dialog = new Dialog(getContext());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_layout_editname);
+
+        Window window = dialog.getWindow();
+        if(window == null){
+            return;
+        }
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        WindowManager.LayoutParams windowAttribute = window.getAttributes();
+
+        windowAttribute.gravity = gravity;
+        window.setAttributes(windowAttribute);
+
+        if(Gravity.CENTER == gravity){
+            dialog.setCancelable(true);
+        }
+        else {
+            dialog.setCancelable(false);
+        }
+
+        EditText editName = dialog.findViewById(R.id.editnameET);
+        Button saveBtn = dialog.findViewById(R.id.saveBtn);
+        Button cancelBtn = dialog.findViewById(R.id.cancelBtn);
+
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        userRef.get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()){
+               String currentname = documentSnapshot.getString("name");
+                if (currentname != null) {
+                    String currentNameWithEllipsis = currentname + "...";
+                    editName.setHint(currentNameWithEllipsis);
+                }
+            }
+        }).addOnFailureListener(e -> {
+            editName.setHint("Cannot get current name!");
+        });
+
+        saveBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String newUsername = editName.getText().toString().trim();
+                String lowercaseUsername = newUsername.toLowerCase();
+
+                Map<String, Object> updates = new HashMap<>();
+                updates.put("name", newUsername);
+                updates.put("search", lowercaseUsername);
+
+                if (!newUsername.isEmpty()){
+                    userRef.update(updates)
+                            .addOnSuccessListener(aVoid -> {
+                                Toast.makeText(getContext(), "Username updated successfully", Toast.LENGTH_SHORT).show();
+                                dialog.dismiss();
+                            }).addOnFailureListener(e -> {
+                                Toast.makeText(getContext(), "Failed to update username", Toast.LENGTH_SHORT).show();
+                            });
+                }else{
+                    Toast.makeText(getContext(), "Please enter a username", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        dialog.show();
+    }
+
+    private void openEditStatusDialog(int gravity){
+        final Dialog dialog = new Dialog(getContext());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_layout_editstatus);
+
+        Window window = dialog.getWindow();
+        if(window == null){
+            return;
+        }
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        WindowManager.LayoutParams windowAttribute = window.getAttributes();
+
+        windowAttribute.gravity = gravity;
+        window.setAttributes(windowAttribute);
+
+        if(Gravity.CENTER == gravity){
+            dialog.setCancelable(true);
+        }
+        else {
+            dialog.setCancelable(false);
+        }
+
+        EditText editStatus = dialog.findViewById(R.id.editstatusET);
+        Button saveBtn = dialog.findViewById(R.id.saveBtn);
+        Button cancelBtn = dialog.findViewById(R.id.cancelBtn);
+
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        userRef.get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()){
+                String currentstatus = documentSnapshot.getString("status");
+                if (currentstatus != null) {
+                    String currentNameWithEllipsis = currentstatus + "...";
+                    editStatus.setHint(currentNameWithEllipsis);
+                }
+            }
+        }).addOnFailureListener(e -> {
+            editStatus.setHint("Cannot get current status!");
+        });
+
+        saveBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String newStatus = editStatus.getText().toString().trim();
+
+                if (!newStatus.isEmpty()){
+                    userRef.update("status", newStatus)
+                            .addOnSuccessListener(aVoid -> {
+                                Toast.makeText(getContext(), "Status updated successfully", Toast.LENGTH_SHORT).show();
+                                dialog.dismiss();
+                            }).addOnFailureListener(e -> {
+                                Toast.makeText(getContext(), "Failed to update status", Toast.LENGTH_SHORT).show();
+                            });
+                }else{
+                    Toast.makeText(getContext(), "Please enter a status", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+
+
+        dialog.show();
+    }
 
     void queryChat(){
 
@@ -451,6 +618,8 @@ public class Profile extends Fragment {
         optionBtn = view.findViewById(R.id.optionBtn);
         newuserNotification = view.findViewById(R.id.notification);
         emptyGallery = view.findViewById(R.id.emptyGallery);
+        editName = view.findViewById(R.id.edit_name);
+        editStatus = view.findViewById(R.id.edit_status);
 
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
