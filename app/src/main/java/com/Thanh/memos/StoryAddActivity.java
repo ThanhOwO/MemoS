@@ -142,6 +142,7 @@ public class StoryAddActivity extends AppCompatActivity {
     void uploadVideoDatatoFirestore(String url, String type){
 
         CollectionReference reference = FirebaseFirestore.getInstance().collection("Stories");
+        CollectionReference referenceImg = FirebaseFirestore.getInstance().collection("Users");
 
         String id = reference.document().getId();
 

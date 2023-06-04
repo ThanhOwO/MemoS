@@ -670,7 +670,7 @@ public class Profile extends Fragment {
                     try {
                         Glide.with(getContext().getApplicationContext())
                                 .load(profileURL)
-                                .placeholder(R.drawable.ic_person)
+                                .placeholder(R.drawable.profile)
                                 .circleCrop()
                                 .listener(new RequestListener<Drawable>() {
                                     @Override
@@ -1090,6 +1090,7 @@ public class Profile extends Fragment {
         map.put("notification", user.getDisplayName() + " has followed you.");
         map.put("id", id);
         map.put("uid", userUID);
+        map.put("oppositeID", user.getUid());
 
         reference.document().set(map);
     }
