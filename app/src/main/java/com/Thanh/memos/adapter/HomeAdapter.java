@@ -2,13 +2,17 @@ package com.Thanh.memos.adapter;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -25,6 +29,8 @@ import com.Thanh.memos.FragmentReplacerActivity;
 import com.Thanh.memos.R;
 import com.Thanh.memos.model.HomeModel;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.EventListener;
@@ -184,7 +190,53 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeHolder> {
                 }
             });
 
+            imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showDialog(Gravity.CENTER, imageUrl);
+                }
+            });
+
         }
+
+        private void showDialog(int gravity, String imageUrl) {
+            final Dialog dialog = new Dialog(context);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setContentView(R.layout.image_zoom_dialog);
+
+            Window window = dialog.getWindow();
+            if(window == null){
+                return;
+            }
+            int heightInDp = 400;
+            float scale = context.getResources().getDisplayMetrics().density;
+            int heightInPixels = (int) (heightInDp * scale + 0.5f);
+
+            WindowManager.LayoutParams windowAttributes = window.getAttributes();
+            windowAttributes.width = WindowManager.LayoutParams.MATCH_PARENT;
+            windowAttributes.height = heightInPixels;
+            window.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#90000000")));
+            window.setAttributes(windowAttributes);
+
+            windowAttributes.gravity = gravity;
+
+            if(Gravity.CENTER == gravity){
+                dialog.setCancelable(true);
+            }
+            else {
+                dialog.setCancelable(false);
+            }
+
+            ImageView img = dialog.findViewById(R.id.Imgzoom);
+
+            Glide.with(context)
+                    .load(imageUrl)
+                    .transform(new CenterCrop(), new RoundedCorners(20))
+                    .into(img);
+
+            dialog.show();
+        }
+
     }
 
 
