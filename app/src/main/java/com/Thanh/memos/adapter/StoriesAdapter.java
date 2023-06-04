@@ -1,7 +1,7 @@
 package com.Thanh.memos.adapter;
 
 import static com.Thanh.memos.ViewStoryActivity.FILE_TYPE;
-import static com.Thanh.memos.ViewStoryActivity.PROFILE_IMG;
+import static com.Thanh.memos.ViewStoryActivity.UID;
 import static com.Thanh.memos.ViewStoryActivity.USER_NAME;
 import static com.Thanh.memos.ViewStoryActivity.VIDEO_URL_KEY;
 
@@ -108,7 +108,7 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.StoriesH
                         intent.putExtra(VIDEO_URL_KEY, list.get(position).getUrl());
                         intent.putExtra(FILE_TYPE, list.get(position).getType());
                         intent.putExtra(USER_NAME, list.get(position).getName());
-                        intent.putExtra(PROFILE_IMG, list.get(position).getProfileImage());
+                        intent.putExtra(UID, list.get(position).getUid());
                         activity.startActivity(intent);
                     }
 

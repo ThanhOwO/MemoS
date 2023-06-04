@@ -3,6 +3,7 @@ package com.Thanh.memos;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -19,6 +20,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -34,7 +36,7 @@ public class ViewStoryActivity extends AppCompatActivity {
     public static final String VIDEO_URL_KEY = "videoURL";
     public static final String FILE_TYPE = "file type";
     public static final String USER_NAME = "user name";
-    public static final String PROFILE_IMG = "profile image";
+    public static final String UID= "uid";
     ImageView imageView;
     CircleImageView storyProfileImage;
     TextView storyUserName;
@@ -48,7 +50,7 @@ public class ViewStoryActivity extends AppCompatActivity {
         String url = getIntent().getStringExtra(VIDEO_URL_KEY);
         String type = getIntent().getStringExtra(FILE_TYPE);
         String name = getIntent().getStringExtra(USER_NAME);
-        String profileImg = getIntent().getStringExtra(PROFILE_IMG);
+        String uid = getIntent().getStringExtra(UID);
         if(url == null || url.isEmpty()){
             finish();
         }
@@ -63,18 +65,32 @@ public class ViewStoryActivity extends AppCompatActivity {
                     .load(url)
                     .into(imageView);
 
-            Glide.with(getApplicationContext())
-                    .load(profileImg)
-                    .into(storyProfileImage);
+            FirebaseFirestore.getInstance().collection("Users").document(uid)
+                    .addSnapshotListener((value, error) -> {
+                        if (error != null)
+                            return;
+
+                        if (!value.exists())
+                            return;
+
+                        Glide.with(getApplicationContext()).load(value.getString("profileImage")).into(storyProfileImage);
+                    });
 
             storyUserName.setText(name);
 
         }else {
             storyUserName.setText(name);
 
-            Glide.with(getApplicationContext())
-                    .load(profileImg)
-                    .into(storyProfileImage);
+            FirebaseFirestore.getInstance().collection("Users").document(uid)
+                    .addSnapshotListener((value, error) -> {
+                        if (error != null)
+                            return;
+
+                        if (!value.exists())
+                            return;
+
+                        Glide.with(getApplicationContext()).load(value.getString("profileImage")).into(storyProfileImage);
+                    });
 
             //video
             exoPlayer.setVisibility(View.VISIBLE);
