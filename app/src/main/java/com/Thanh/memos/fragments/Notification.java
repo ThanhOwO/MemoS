@@ -61,6 +61,7 @@ public class Notification extends Fragment {
         list = new ArrayList<>();
         adapter = new NotificationAdapter(getContext(), list);
 
+
         recyclerView.setAdapter(adapter);
         user = FirebaseAuth.getInstance().getCurrentUser();
     }

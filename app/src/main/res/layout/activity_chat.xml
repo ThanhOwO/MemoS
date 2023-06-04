@@ -18,7 +18,7 @@
             android:layout_width="52dp"
             android:layout_height="52dp"
             android:id="@+id/profileImage"
-            android:src="#2EFF00"
+            android:src="@color/colorPrimaryDark"
             android:layout_centerVertical="true"
             app:civ_border_color="@color/colorAccent"
             app:civ_border_width="2dp"/>
