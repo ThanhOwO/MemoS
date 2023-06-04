@@ -25,6 +25,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -61,11 +62,14 @@ import com.Thanh.memos.model.PostImageModel;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -79,6 +83,7 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -86,6 +91,7 @@ import com.google.firebase.storage.UploadTask;
 import com.marsad.stylishdialogs.StylishAlertDialog;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
+
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -165,6 +171,7 @@ public class Profile extends Fragment {
             followBtn.setVisibility(View.VISIBLE);
             editName.setVisibility(View.GONE);
             editStatus.setVisibility(View.GONE);
+
         }
 
         //get user information from firebase storage
@@ -764,7 +771,213 @@ public class Profile extends Fragment {
                         .into(holder.imageView);
                 count = getItemCount();
                 postCountTv.setText("" + count);
+
+                holder.imageView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        openEditPost(Gravity.CENTER, model.getImageUrl(), model.getId(), model.getDescription());
+                    }
+                });
+
             }
+
+             private void openEditPost(int gravity, String imageUrl, String postId, String descriptionText){
+                 final Dialog dialog = new Dialog(getContext());
+                 dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                 dialog.setContentView(R.layout.dialog_editpost);
+
+                 Window window = dialog.getWindow();
+                 if(window == null){
+                     return;
+                 }
+                 window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+                 window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                 WindowManager.LayoutParams windowAttribute = window.getAttributes();
+
+                 windowAttribute.gravity = gravity;
+                 window.setAttributes(windowAttribute);
+
+                 if(Gravity.CENTER == gravity){
+                     dialog.setCancelable(true);
+                 }
+                 else {
+                     dialog.setCancelable(false);
+                 }
+
+                 ImageView img = dialog.findViewById(R.id.postImg);
+                 ImageButton imgBtn = dialog.findViewById(R.id.deletePost);
+                 TextView description = dialog.findViewById(R.id.postDes);
+                 ImageButton editBtn = dialog.findViewById(R.id.edit_description);
+                 EditText editDes = dialog.findViewById(R.id.postdesET);
+                 Button saveBtn = dialog.findViewById(R.id.saveBtn);
+                 Button cancelBtn = dialog.findViewById(R.id.cancelBtn);
+
+                 int radius = (int) getResources().getDisplayMetrics().density * 16; // Convert 16dp to pixels
+                 Glide.with(dialog.getContext().getApplicationContext())
+                         .load(imageUrl)
+                         .transform(new CenterCrop(), new RoundedCorners(radius))
+                         .into(img);
+
+                 imgBtn.setOnClickListener(new View.OnClickListener() {
+                     @Override
+                     public void onClick(View v) {
+                         showConfirmationDialog(dialog, postId);
+                     }
+                 });
+
+                 description.setText(descriptionText);
+                 editBtn.setOnClickListener(new View.OnClickListener() {
+                     @Override
+                     public void onClick(View v) {
+                         editDes.setVisibility(View.VISIBLE);
+                         editBtn.setVisibility(View.GONE);
+                         editDes.setHint(description.getText().toString());
+                     }
+                 });
+
+                 cancelBtn.setOnClickListener(new View.OnClickListener() {
+                     @Override
+                     public void onClick(View v) {
+                         dialog.dismiss();
+                     }
+                 });
+
+                 saveBtn.setOnClickListener(new View.OnClickListener() {
+                     @Override
+                     public void onClick(View v) {
+                         String updatedDescription = editDes.getText().toString().trim();
+                         // Perform update operation using Firestore
+                         updatePostDescription(postId, updatedDescription);
+                         description.setText(updatedDescription);
+                         editDes.setVisibility(View.GONE);
+                         editBtn.setVisibility(View.VISIBLE);
+                     }
+                 });
+
+                 if (!isMyProfile){
+                     imgBtn.setVisibility(View.GONE);
+                     editBtn.setVisibility(View.GONE);
+                     saveBtn.setVisibility(View.GONE);
+                     cancelBtn.setVisibility(View.GONE);
+                 }
+
+                 dialog.show();
+             }
+
+             private void showConfirmationDialog(Dialog previousDialog, String postId) {
+                 // Create and set up your custom dialog using your confirm dialog layout
+                 final Dialog confirmationDialog = new Dialog(getContext());
+                 confirmationDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                 confirmationDialog.setContentView(R.layout.confirm_dialog);
+
+                 Window window = confirmationDialog.getWindow();
+                 if(window == null){
+                     return;
+                 }
+                 window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+                 window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                 WindowManager.LayoutParams windowAttribute = window.getAttributes();
+
+                 // Set up your dialog's views and buttons as needed
+                 Button yesButton = confirmationDialog.findViewById(R.id.yesBtn);
+                 Button noButton = confirmationDialog.findViewById(R.id.noBtn);
+
+                 // Set up the button click listeners
+                 yesButton.setOnClickListener(new View.OnClickListener() {
+                     @Override
+                     public void onClick(View v) {
+                         // Perform delete operation using Firestore
+                         deletePost(postId);
+                         previousDialog.dismiss();
+                         confirmationDialog.dismiss();
+                     }
+                 });
+
+                 noButton.setOnClickListener(new View.OnClickListener() {
+                     @Override
+                     public void onClick(View v) {
+                         confirmationDialog.dismiss();
+                     }
+                 });
+
+                 // Show the custom confirmation dialog
+                 confirmationDialog.show();
+             }
+
+             private void deletePost(String postId) {
+                 // Get the reference to the "Post Images" collection of the current user
+                 DocumentReference postRef = FirebaseFirestore.getInstance()
+                         .collection("Users")
+                         .document(userUID)
+                         .collection("Post Images")
+                         .document(postId);
+
+                 // Delete the document
+                 postRef.delete()
+                         .addOnSuccessListener(new OnSuccessListener<Void>() {
+                             @Override
+                             public void onSuccess(Void aVoid) {
+                                 // Deletion successful
+                                 Toast.makeText(getContext(), "Post deleted successfully", Toast.LENGTH_SHORT).show();
+                             }
+                         })
+                         .addOnFailureListener(new OnFailureListener() {
+                             @Override
+                             public void onFailure(@NonNull Exception e) {
+                                 // Error occurred while deleting
+                                 Toast.makeText(getContext(), "Failed to delete post", Toast.LENGTH_SHORT).show();
+                             }
+                         });
+
+                 // Get the reference to the "Comments" subcollection within the document
+                 CollectionReference commentsRef = postRef.collection("Comments");
+
+                 // Delete all the documents within the "Comments" subcollection
+                 commentsRef.get()
+                         .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                             @Override
+                             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                 // Delete each document within the "Comments" subcollection
+                                 for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                                     DocumentReference commentRef = commentsRef.document(documentSnapshot.getId());
+                                     commentRef.delete();
+                                 }
+                             }
+                         })
+                         .addOnFailureListener(new OnFailureListener() {
+                             @Override
+                             public void onFailure(@NonNull Exception e) {
+                                 // Error occurred while deleting the "Comments" subcollection
+                                 Toast.makeText(getContext(), "Failed to delete comments", Toast.LENGTH_SHORT).show();
+                             }
+                         });
+             }
+
+
+             private void updatePostDescription(String postId, String updatedDescription) {
+                 // Get the reference to the "Post Images" collection of the current user
+                 DocumentReference reference = FirebaseFirestore.getInstance()
+                         .collection("Users")
+                         .document(userUID)
+                         .collection("Post Images")
+                         .document(postId);
+
+                 reference.update("description", updatedDescription)
+                         .addOnSuccessListener(new OnSuccessListener<Void>() {
+                             @Override
+                             public void onSuccess(Void aVoid) {
+                                 // Update successful
+                                 Toast.makeText(getContext(), "Description updated successfully", Toast.LENGTH_SHORT).show();
+                             }
+                         })
+                         .addOnFailureListener(new OnFailureListener() {
+                             @Override
+                             public void onFailure(@NonNull Exception e) {
+                                 // Error occurred while updating
+                                 Toast.makeText(getContext(), "Failed to update description", Toast.LENGTH_SHORT).show();
+                             }
+                         });
+             }
 
              @Override
              public int getItemCount() {

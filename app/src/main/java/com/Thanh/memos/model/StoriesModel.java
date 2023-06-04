@@ -1,17 +1,26 @@
 package com.Thanh.memos.model;
 
 public class StoriesModel {
-    String url, id, name, uid, type;
+    String url, id, name, uid, type, profileImage;
 
     public StoriesModel() {
     }
 
-    public StoriesModel(String url, String id, String name, String uid, String type) {
+    public StoriesModel(String url, String id, String name, String uid, String type, String profileImage) {
         this.url = url;
         this.id = id;
         this.name = name;
         this.uid = uid;
         this.type = type;
+        this.profileImage = profileImage;
+    }
+
+    public String getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
     }
 
     public String getUrl() {

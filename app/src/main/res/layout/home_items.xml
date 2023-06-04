@@ -44,13 +44,14 @@
             android:textColor="@color/black"/>
     </LinearLayout>
 
+
     <ImageView
+        android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="220dp"
         android:layout_below="@+id/descTv"
-        android:id="@+id/imageView"
+        android:layout_marginTop="10dp"
         android:scaleType="centerCrop" />
-
 
     <LinearLayout
         android:id="@+id/linearLayout"
