@@ -204,7 +204,9 @@ public class MainActivity extends AppCompatActivity implements Search.OnDataPass
                     .document(userId)
                     .update(map);
         } else {
-            // Handle the situation when the FirebaseUser object is null
+            Intent intent = new Intent(this, FragmentReplacerActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
         }
     }
 }
