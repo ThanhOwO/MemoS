@@ -25,7 +25,8 @@
         android:textSize="18sp"
         android:textColor="@color/black"
         android:layout_marginStart="4dp"
-        android:layout_marginEnd="66dp"/>
+        android:layout_marginEnd="66dp"
+        android:maxLength="30"/>
 
     <TextView
         android:layout_width="match_parent"
@@ -37,7 +38,8 @@
         android:layout_below="@+id/nameTV"
         android:textColor="#9A9A9A"
         android:layout_marginStart="4dp"
-        android:layout_marginEnd="66dp"/>
+        android:layout_marginEnd="66dp"
+        android:maxLines="1"/>
 
     <TextView
         android:layout_width="wrap_content"

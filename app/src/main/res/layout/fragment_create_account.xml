@@ -48,7 +48,8 @@
             android:background="@drawable/text_box"
             android:hint="Name"
             android:padding="12dp"
-            android:textColor="@color/black"/>
+            android:textColor="@color/black"
+            android:textColorHint="#656565"/>
 
         <EditText
             android:id="@+id/emailET"
@@ -58,7 +59,8 @@
             android:background="@drawable/text_box"
             android:hint="Email"
             android:padding="12dp"
-            android:textColor="@color/black"/>
+            android:textColor="@color/black"
+            android:textColorHint="#656565"/>
 
         <EditText
             android:id="@+id/passwordET"
@@ -69,7 +71,8 @@
             android:hint="Password"
             android:padding="12dp"
             android:textColor="@color/black"
-            android:inputType="textPassword"/>
+            android:inputType="textPassword"
+            android:textColorHint="#656565"/>
 
         <EditText
             android:id="@+id/confirmPassET"
@@ -80,7 +83,8 @@
             android:hint="Confirm Password"
             android:padding="12dp"
             android:textColor="@color/black"
-            android:inputType="textPassword"/>
+            android:inputType="textPassword"
+            android:textColorHint="#656565"/>
     </LinearLayout>
 
     <ProgressBar

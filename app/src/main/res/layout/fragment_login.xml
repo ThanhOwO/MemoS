@@ -32,7 +32,8 @@
             android:background="@drawable/text_box"
             android:hint="Email"
             android:padding="12dp"
-            android:textColor="@color/black"/>
+            android:textColor="@color/black"
+            android:textColorHint="#656565"/>
 
         <EditText
             android:id="@+id/passwordET"
@@ -41,9 +42,10 @@
             android:layout_margin="8dp"
             android:background="@drawable/text_box"
             android:hint="Password"
+            android:inputType="textPassword"
             android:padding="12dp"
             android:textColor="@color/black"
-            android:inputType="textPassword"/>
+            android:textColorHint="#656565"/>
 
         <TextView
             android:id="@+id/forgotTV"

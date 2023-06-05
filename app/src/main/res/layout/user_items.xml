@@ -22,7 +22,8 @@
         android:textStyle="bold"
         android:textSize="18sp"
         android:padding="8dp"
-        android:layout_toRightOf="@+id/profileImage" />
+        android:layout_toRightOf="@+id/profileImage"
+        android:maxLines="1"/>
 
     <TextView
         android:layout_width="match_parent"
@@ -34,6 +35,7 @@
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
         android:layout_toRightOf="@+id/profileImage"
-        android:layout_below="@+id/nameTV"/>
+        android:layout_below="@+id/nameTV"
+        android:maxLines="3"/>
 
 </RelativeLayout>
