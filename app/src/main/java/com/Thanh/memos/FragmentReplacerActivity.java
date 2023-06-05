@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.FrameLayout;
 
@@ -58,34 +59,5 @@ public class FragmentReplacerActivity extends AppCompatActivity {
 
         fragmentTransaction.replace(frameLayout.getId(), fragment);
         fragmentTransaction.commit();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        updateStatus(true);
-    }
-
-    @Override
-    protected void onPause() {
-        updateStatus(false);
-        super.onPause();
-    }
-
-    void updateStatus(boolean status){
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            String userId = user.getUid();
-
-            Map<String, Object> map = new HashMap<>();
-            map.put("online", status);
-
-            FirebaseFirestore.getInstance()
-                    .collection("Users")
-                    .document(userId)
-                    .update(map);
-        } else {
-            // Handle the situation when the FirebaseUser object is null
-        }
     }
 }

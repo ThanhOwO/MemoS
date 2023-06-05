@@ -139,6 +139,9 @@ public class Home extends Fragment {
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                String uid = user.getUid();
+                DocumentReference userRef = FirebaseFirestore.getInstance().collection("Users").document(uid);
+                userRef.update("online", false);
                 Intent intent = new Intent(getActivity(), ChatUsersActivity.class);
                 startActivity(intent);
             }

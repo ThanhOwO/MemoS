@@ -127,6 +127,8 @@ public class ChatActivity extends AppCompatActivity {
                 .addSnapshotListener((value, error) -> {
                     if (error != null)
                         return;
+                    if (value == null)
+                        return;
                     if (!value.exists())
                         return;
                     //check user online or offline
