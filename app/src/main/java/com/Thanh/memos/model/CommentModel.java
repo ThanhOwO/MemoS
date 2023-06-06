@@ -1,18 +1,33 @@
 package com.Thanh.memos.model;
 
+import com.google.firebase.firestore.ServerTimestamp;
+
+import java.util.Date;
+
 public class CommentModel {
     String comment, commentID, postID, uid, name, profileImageUrl;
+    @ServerTimestamp
+    private Date timestamp;
 
     public CommentModel() {
     }
 
-    public CommentModel(String comment, String commentID, String postID, String uid, String name, String profileImageUrl) {
+    public CommentModel(String comment, String commentID, String postID, String uid, String name, String profileImageUrl, Date timestamp) {
         this.comment = comment;
         this.commentID = commentID;
         this.postID = postID;
         this.uid = uid;
         this.name = name;
         this.profileImageUrl = profileImageUrl;
+        this.timestamp = timestamp;
+    }
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
     }
 
     public String getComment() {

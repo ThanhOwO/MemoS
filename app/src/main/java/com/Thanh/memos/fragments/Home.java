@@ -32,6 +32,7 @@ import com.Thanh.memos.R;
 import com.Thanh.memos.adapter.HomeAdapter;
 import com.Thanh.memos.adapter.StoriesAdapter;
 import com.Thanh.memos.chat.ChatUsersActivity;
+import com.Thanh.memos.model.CommentModel;
 import com.Thanh.memos.model.HomeModel;
 import com.Thanh.memos.model.StoriesModel;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -214,6 +215,7 @@ public class Home extends Fragment {
                                 for (QueryDocumentSnapshot snapshot : value1){
 
                                     snapshot.getReference().collection("Post Images")
+                                            .orderBy("timestamp", Query.Direction.DESCENDING)
                                             .addSnapshotListener(new EventListener<QuerySnapshot>() {
                                                 @Override
                                                 public void onEvent(@Nullable QuerySnapshot value11, @Nullable FirebaseFirestoreException error11) {
@@ -254,20 +256,35 @@ public class Home extends Fragment {
                                                             }
 
                                                             //get comment from database firebase
-                                                            snapshot1.getReference().collection("Comments").get()
+                                                        snapshot1.getReference().collection("Comments")
+                                                                .orderBy("timestamp", Query.Direction.DESCENDING)
+                                                                .get()
                                                                 .addOnCompleteListener(task -> {
                                                                     if (task.isSuccessful()) {
-                                                                        Map<String, Object> map = new HashMap<>();
+                                                                        List<CommentModel> comments = new ArrayList<>();
                                                                         for (QueryDocumentSnapshot commentSnapshot : task.getResult()) {
-                                                                            Map<String, Object> commentData = commentSnapshot.getData();
-                                                                            map.putAll(commentData);
+                                                                            CommentModel commentModel = commentSnapshot.toObject(CommentModel.class);
+                                                                            comments.add(commentModel);
                                                                         }
-                                                                        commentCount.setValue(map.size());
 
+                                                                        // Sort the comments by timestamp in descending order
+                                                                        Collections.sort(comments, new Comparator<CommentModel>() {
+                                                                            @Override
+                                                                            public int compare(CommentModel o1, CommentModel o2) {
+                                                                                return o2.getTimestamp().compareTo(o1.getTimestamp()); // Compare in reverse order
+                                                                            }
+                                                                        });
+
+                                                                        commentCount.setValue(comments.size());
                                                                     }
-
                                                                 });
                                                     }
+                                                    Collections.sort(list, new Comparator<HomeModel>() {
+                                                        @Override
+                                                        public int compare(HomeModel o1, HomeModel o2) {
+                                                            return o2.getTimestamp().compareTo(o1.getTimestamp()); // Compare in reverse order
+                                                        }
+                                                    });
                                                     if (list.isEmpty()) {
                                                         introduce.setVisibility(View.VISIBLE);
                                                     } else {
