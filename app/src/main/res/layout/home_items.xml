@@ -34,7 +34,8 @@
             android:id="@+id/nameTv"
             android:text="Username"
             android:textColor="@color/black"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:maxLength="30"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -138,7 +139,8 @@
         android:layout_below="@+id/profileImage"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
-        android:layout_marginBottom="10dp"/>
+        android:layout_marginBottom="10dp"
+        android:maxLines="15"/>
 
 
 
