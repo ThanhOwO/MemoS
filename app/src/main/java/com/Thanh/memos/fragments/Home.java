@@ -199,6 +199,8 @@ public class Home extends Fragment {
                 if (uidList == null || uidList.isEmpty())
                     return;
 
+                uidList.add(user.getUid());
+
                 collectionReference.whereIn("uid", uidList)
                         .addSnapshotListener(new EventListener<QuerySnapshot>() {
                             @Override
